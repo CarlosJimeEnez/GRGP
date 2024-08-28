@@ -1,0 +1,27 @@
+.container-home {
+    display: grid;
+    grid-template-columns: 15vh 2fr 2fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: 
+        "sidebar header header"
+        "sidebar content content"
+        "footer footer footer";
+}
+.header { 
+    grid-area: header;
+    background: var(--background);
+}
+.sidebar { 
+    grid-area: sidebar;
+    background: var(--dashboard);
+}
+.content {
+    grid-area: content;
+    background: blue;
+}
+
+.footer { 
+    grid-area: footer;
+    background: lightgray;
+ }
+
