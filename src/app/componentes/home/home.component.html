@@ -3,15 +3,21 @@
     <app-sidebar class="sidebar"/>
     <div class="fluid-container content">
         <div class="row">
-            <div class="col-md-6 mt-1  ms-5">
+            <div class="col-md-6 mt-1 ms-5">
                 <div class="map">
                     <app-live-map/>
                 </div>
             </div>
-            <!-- Columna para Live Statics y Alerts -->
+            <!-- Columna para Live Statics-->
             <div class="col-md-3">
-                <div class="live-stats mb-3">
-                    <p>Live Statics</p>
+                <div class="live-stats">
+                    <app-live-statistics/>
+                </div>
+            </div>
+            <!-- Alerts -->
+            <div class="col-md-2">
+                <div class="live-stats">
+                    <app-live-statistics/>
                 </div>
             </div>
         </div>
