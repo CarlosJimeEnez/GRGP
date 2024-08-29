@@ -25,3 +25,7 @@ body {
 h1 {
     margin: 0px;
 }
+
+.bold {
+    font-weight: bold;
+}
