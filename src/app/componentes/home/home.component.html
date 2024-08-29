@@ -1,8 +1,8 @@
 <div class="container-home">
     <app-header class="header"/>
     <app-sidebar class="sidebar"/>
-    <div class="fluid-container  content">
-        <div class="row justify-content-center d-flex">
+    <div class="fluid-container content">
+        <div class="row justify-content-center d-flex m-0">
             <!-- Live Map -->
             <div class="col-md-6">
                 <div class="map h-100">
@@ -16,17 +16,17 @@
                 </div>
             </div>
             <!-- Alerts -->
-            <div class="col-md-2">
+            <div class="col-md-2 p-0">
                 <div class="live-stats h-100">
                     <app-alerts/>
                 </div>
             </div>
         </div>
-        <div class="row mt-3">
-            <!-- Columna para Pilots -->
-            <div class="col-md-12">
+        <!-- Columna para Pilots -->
+        <div class="row justify-content-center d-flex m-0">
+            <div class="col-md-11 justify-content-center ">
                 <div class="pilots">
-                    <p>Pilots</p>
+                    <app-live-leaderboard/>
                 </div>
             </div>
         </div>
