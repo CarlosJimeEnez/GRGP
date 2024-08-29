@@ -1,6 +1,28 @@
 <div class="container-home">
     <app-header class="header"/>
     <app-sidebar class="sidebar"/>
-    <div class="Content"> Content</div>
+    <div class="fluid-container content">
+        <div class="row">
+            <div class="col-md-6 mt-1  ms-5">
+                <div class="map">
+                    <app-live-map/>
+                </div>
+            </div>
+            <!-- Columna para Live Statics y Alerts -->
+            <div class="col-md-3">
+                <div class="live-stats mb-3">
+                    <p>Live Statics</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <!-- Columna para Pilots -->
+            <div class="col-md-12">
+                <div class="pilots">
+                    <p>Pilots</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="footer"> Footer</div>
 </div>

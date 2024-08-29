@@ -1,0 +1,32 @@
+.card {
+    position: relative;
+    background-color: var(--background);
+    width: 100%;
+    overflow: hidden;
+    border: none;
+    display: flex;
+    align-items: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+.card-body {
+    position: absolute; /* Posiciona el texto sobre la imagen */
+    top: var(--m1); /* Ajusta la posición desde la parte superior */
+    left: var(--m3); /* Ajusta la posición desde la parte izquierda */
+    color: #000; /* Color del texto */
+    font-size: 2rem; /* Tamaño de la fuente */
+    font-weight: bold; /* Hace el texto en negrita */
+    padding: 5px 10px; /* Añade algo de espacio alrededor del texto */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.card-img-top {
+    width: 100%; 
+    height: auto;
+    max-width: 557px;
+    max-height: 321.35px;
+    object-fit: cover; 
+}

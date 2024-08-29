@@ -15,9 +15,10 @@
     grid-area: sidebar;
     background: var(--dashboard);
 }
+
 .content {
     grid-area: content;
-    background: blue;
+    background: var(--background);
 }
 
 .footer { 
@@ -25,3 +26,6 @@
     background: lightgray;
  }
 
+ .map {
+    overflow: auto;
+ }
