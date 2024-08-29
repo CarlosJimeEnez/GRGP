@@ -16,6 +16,11 @@
     background: var(--dashboard);
 }
 
+.live-stats {
+    border-radius: 15%;
+    border-width: 0px;
+}
+
 .content {
     grid-area: content;
     background: var(--background);

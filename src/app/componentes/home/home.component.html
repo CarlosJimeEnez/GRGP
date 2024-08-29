@@ -1,23 +1,24 @@
 <div class="container-home">
     <app-header class="header"/>
     <app-sidebar class="sidebar"/>
-    <div class="fluid-container content">
-        <div class="row">
-            <div class="col-md-6 mt-1 ms-5">
-                <div class="map">
+    <div class="fluid-container  content">
+        <div class="row justify-content-center d-flex">
+            <!-- Live Map -->
+            <div class="col-md-6">
+                <div class="map h-100">
                     <app-live-map/>
                 </div>
             </div>
             <!-- Columna para Live Statics-->
             <div class="col-md-3">
-                <div class="live-stats">
+                <div class="live-stats h-100">
                     <app-live-statistics/>
                 </div>
             </div>
             <!-- Alerts -->
             <div class="col-md-2">
-                <div class="live-stats">
-                    <app-live-statistics/>
+                <div class="live-stats h-100">
+                    <app-alerts/>
                 </div>
             </div>
         </div>
