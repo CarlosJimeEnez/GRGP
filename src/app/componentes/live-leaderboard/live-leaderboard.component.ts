@@ -13,9 +13,7 @@ export interface Pilots {
 
 const pilotsData: Pilots[] = [
   {position: 1, name: 'Jenny', team: "unknow", gap: 'Leader', penalties: 0, status: '', color: '#F315C3'},
-  {position: 2, name: 'Jacob', team: "unknow", gap: '', penalties: 1, status: '5', color: '#D6F2FB'},
-  {position: 3, name: 'Larry', team: "unknow", gap: '', penalties: 0, status: '', color: '#F31515'},
-  {position: 4, name: 'Mary', team: "unknow", gap: '', penalties: 0, status: '', color: '#3715F3'},  
+  {position: 3, name: 'Larry', team: "unknow", gap: '', penalties: 0, status: '', color: '#F31515'}, 
 ];
 
 @Component({
