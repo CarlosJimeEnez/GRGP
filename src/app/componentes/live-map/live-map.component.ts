@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MapPoints} from "./vectors"
 import * as THREE from 'three'
@@ -13,38 +13,46 @@ import * as YUKA from 'yuka'
   styleUrl: './live-map.component.css'
 })
 export class LiveMapComponent implements OnInit, AfterViewInit {
+  @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
+
   renderer!: any
   entityManager: any
   scene: any
   camera: any
-  time: any
-  offseX: number = 3
-  offseY: number = -4
-  scaleFactor: number = 0.03; 
-  
-  @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
+  time: YUKA.Time; 
+  offseX: number = 10
+  offseY: number = -7
+  scaleFactor: number = 0.039; 
+  meshLine: any;
+  width: number = 670
+  height: number = 534
 
-  constructor(){
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.entityManager = new YUKA.EntityManager();
     this.scene = new THREE.Scene();
     this.time = new YUKA.Time();
+    // No inicializar Three.js aquí
   }
 
   ngAfterViewInit(): void {
+    this.entityManager = new YUKA.EntityManager();
+    this.scene = new THREE.Scene();
+    this.time = new YUKA.Time();
+
+    this.updateDimensions()
     this.camera = new THREE.PerspectiveCamera(
       45,
-      (this.mapContainer.nativeElement.clientWidth) / (this.mapContainer.nativeElement.clientHeight),
+      (this.width) / (this.height),
       0.1,
       1000
     );
 
     //Render
     this.renderer = new THREE.WebGLRenderer({antialias: true});
-    this.renderer.setSize(this.mapContainer.nativeElement.clientWidth, this.mapContainer.nativeElement.clientHeight);
-    this.renderer.setClearColor(0xEFF8FB);
+    this.renderer.setSize(this.width, this.height);
+    this.renderer.setClearColor(0x000000, 0);
     this.camera.position.set(0,20,0);
     this.camera.lookAt(this.scene.position);
-
 
     // Crear la geometría de la esfera
     const radius = 0.3; // Radio de la esfera, ajusta según sea necesario
@@ -93,12 +101,10 @@ export class LiveMapComponent implements OnInit, AfterViewInit {
     const position: any = [];
     MapPoints.forEach((element: any) => {
       position.push((element[0]*this.scaleFactor) - this.offseX, 0, (element[1] * this.scaleFactor) + this.offseY)
-      console.log(position)
     });
 
     const lineGeometry = new THREE.BufferGeometry();
     lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(position, 3));
-
     const lineMaterial = new THREE.LineBasicMaterial({color: 0x000000});
     const lines = new THREE.LineLoop(lineGeometry, lineMaterial);
     this.scene.add(lines);
@@ -109,22 +115,27 @@ export class LiveMapComponent implements OnInit, AfterViewInit {
     this.onResize();
   }
 
-  
-  
   ngOnInit() {
     
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event?: Event) {
-    this.camera.aspect = this.mapContainer.nativeElement.clientWidth / this.mapContainer.nativeElement.clientHeight;
-    this.camera.updateProjectionMatrix();
-
-    this.renderer.setSize(this.mapContainer.nativeElement.clientWidth, this.mapContainer.nativeElement.clientHeight);
-    
+    if (typeof window !== "undefined"){
+      this.updateDimensions()
+      this.camera.aspect = this.width / this.height;
+      this.renderer.setSize(this.width, this.height);
+      this.camera.updateProjectionMatrix();
+      console.log(this.width)
+    }
   }
 
-  animate(): void {
+  private updateDimensions(): void {
+    this.width = this.mapContainer.nativeElement.clientWidth;
+    this.height = this.mapContainer.nativeElement.clientHeight;
+  }
+
+  private animate(): void {
     const delta = this.time.update().getDelta();
     this.entityManager.update(delta);
     this.renderer.render(this.scene, this.camera);
