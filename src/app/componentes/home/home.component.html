@@ -2,31 +2,107 @@
     <app-header class="header"/>
     <app-sidebar class="sidebar"/>
     <div class="fluid-container content">
-        <div class="row justify-content-center d-flex m-0">
-            <!-- Live Map -->
-            <div class="col-md-6">
-                <div class="h-100">
-                    <app-live-map />
+        <!-- Crash detection  -->
+        <div class="fluid-container crashDetection">
+            <div class="row justify-content-start d-flex">
+                <!-- Fact -->
+                <div class="col-md-5">
+                    <div class="live-stats">
+                        <div class="card crashDetection-card" >
+                            <div class="card-body">
+                              <h3 class="card-title">Crash Detection and Real-Time </h3>
+                              <p class="card-subtitle mb-2 text-body-secondary">
+                                Our system uses accelerometers to detect sudden impacts. 
+                                When a crash is detected, it sends alerts and records the location using GPS. This ensures quick response and improved safety.
+                                </p>
+                            </div>
+                          </div>
+                    </div>
+                </div>        
+                <!-- Live Map -->
+                <div class="col-md-5">
+                    <div class="">
+                        <app-live-map [src]="srcVideoCrash" [mapId]="1"/>
+                    </div>
                 </div>
             </div>
-            <!-- Columna para Live Statics-->
-            <div class="col-md-3">
-                <div class="live-stats h-100">
-                    <app-live-statistics/>
+            <div class="row justify-content-center d-flex">
+                <!-- Columna para Pilots -->
+                <div class="col-md-8 justify-content-center ms-3">
+                    <div class="pilots">
+                        <app-live-leaderboard/>
+                    </div>
                 </div>
-            </div>
-            <!-- Alerts -->
-            <div class="col-md-2 p-0">
-                <div class="live-stats h-100">
-                    <app-alerts/>
+                <div class="col">
+                    <div class="fluid-container me-3">
+                        <div class="row">
+                            <!-- Alerts -->
+                            <div class="col-12">
+                                <div class="live-stats ">
+                                    <app-alerts [alertId]="1"/>
+                                </div>
+                            </div>
+                            <!-- Columna para Live Statics-->
+                            <div class="col-md-12 mt-3 mb-3">
+                                <div class="live-stats h-100">
+                                    <app-live-statistics/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Columna para Pilots -->
-        <div class="row justify-content-center d-flex m-0">
-            <div class="col-md-11 justify-content-center ">
-                <div class="pilots">
-                    <app-live-leaderboard/>
+    
+        <!-- ZONE OF CONTROL -->
+        <div class="fluid-container mt-3 zoneOfControl" >
+            <div class="row justify-content-start d-flex" >
+                <!-- Fact -->
+                <div class="col-md-5">
+                    <div class="live-stats">
+                        <div class="card zoneOfControl-card">
+                            <div class="card-body">
+                            <h3 class="card-title">Increased Safety by Speed Control and a Slow-Down System </h3>
+                            <p class="card-subtitle mb-2 text-body-secondary">
+                                Our system uses accelerometers to detect sudden impacts. 
+                                When a crash is detected, it sends alerts and records the location using GPS. This ensures quick response and improved safety.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>        
+                <!-- Live Map -->
+                <div class="col-md-5">
+                    <div class="">
+                        <app-live-map [src]="srcVideo" [mapId]="2"/>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row justify-content-center d-flex">
+                <!-- Columna para Pilots -->
+                <div class="col-md-8 justify-content-center ms-3">
+                    <div class="pilots">
+                        <app-live-leaderboard/>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="container">
+                        <div class="row">
+                            <!-- Alerts -->
+                            <div class="col-12">
+                                <div class="live-stats ">
+                                    <app-alerts [alertId]="2"/>
+                                </div>
+                            </div>
+                            <!-- Columna para Live Statics-->
+                            <div class="col-md-12 mt-3">
+                                <div class="live-stats h-100">
+                                    <app-live-statistics/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

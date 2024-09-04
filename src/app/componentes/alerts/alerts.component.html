@@ -2,10 +2,19 @@
     <h5 class="card-title p-3"> Alerts </h5>
     <div class="container">
         <div class="row align-items-center m-1">
-            <div class="alert alert-danger" role="alert">
-                A simple danger alert—check it out!
-                <mat-icon>close</mat-icon>
-            </div>
+            @if (alert) {
+                @if (alertId == 1) {
+                    <div class="alert alert-danger" role="alert">
+                        Crash Detection!
+                        <mat-icon (click)="closeAlarm()">close</mat-icon>
+                    </div>
+                } @else if (alertId == 2) {
+                    <div class="alert alert-danger" role="alert">
+                        Speed Control Zone
+                        <mat-icon (click)="closeAlarm()">close</mat-icon>
+                    </div>
+                }
+            }
         </div>
     </div>
 </div>
