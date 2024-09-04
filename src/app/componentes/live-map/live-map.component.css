@@ -46,4 +46,6 @@ video {
     border-radius: 50%;
   }
   
-  
+  .card-title{
+    font-weight: lighter;
+  }

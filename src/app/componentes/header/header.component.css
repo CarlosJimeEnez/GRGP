@@ -24,3 +24,7 @@ h1 {
 .icon{
     margin: var(--m2);
 }
+
+.title {
+    font-weight: bold;
+}

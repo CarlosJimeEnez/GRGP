@@ -30,3 +30,7 @@ h1 {
 .bold {
     font-weight: bold;
 }
+
+.btn-primary{
+    background-color: var(--primary);
+}
