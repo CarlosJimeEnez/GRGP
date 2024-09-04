@@ -19,11 +19,12 @@
 .live-stats {
     border-radius: 15%;
     border-width: 0px;
+    background-color: var(--background);
+    border-style: none;
 }
 
 .content {
     grid-area: content;
-    background: var(--background);
 }
 
 .footer { 
@@ -31,11 +32,25 @@
     background: lightgray;
  }
 
-.card { 
+.crashDetection-card {
     background-color: var(--background);
     border-style: none;
 }
 
 .card-title {
     font-weight: bold;
+}
+
+.zoneOfControl {
+    background-color: var(--background-v2);
+  }
+
+.crashDetection{
+    background-color: var(--background);
+    margin: 0;
+}
+
+.zoneOfControl-card {
+    background-color: var(--background-v2);
+    border-style: none;
 }

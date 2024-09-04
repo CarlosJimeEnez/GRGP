@@ -14,5 +14,7 @@ import { LiveLeaderboardComponent } from "../../componentes/live-leaderboard/liv
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-
+  srcVideoCrash = "videos/F31515.mp4"
+  srcVideo = "videos/ZoneOfControl.mp4"
+  mapCrash = 1
 }

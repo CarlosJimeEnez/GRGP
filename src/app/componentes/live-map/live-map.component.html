@@ -3,19 +3,11 @@
         <h5 >Live Map</h5>
         <!-- <h1>22/44</h1> -->
     </div>
-    
-    <div class="video-container">
-        <video #video width="600" (ended)="onVideoEnded()" (click)="togglePlayPause()">
-          <source src="videos/F31515.mp4" type="video/mp4">
-          Tu navegador no soporta la reproducción de video.
-        </video>
-        <div class="play-button" (click)="togglePlayPause()" *ngIf="!isPlaying">
-          ▶️
-        </div>
+      <video #video width="600" (ended)="onVideoEnded()" (click)="togglePlayPause()">
+        <source [src]="src" type="video/mp4">
+        Tu navegador no soporta la reproducción de video.
+      </video>
+      <div class="play-button" (click)="togglePlayPause()" *ngIf="!isPlaying">
+        ▶️
       </div>
-
-    <section class="example-section mt-3">
-        <mat-checkbox class="example-margin">Anchors</mat-checkbox>
-        <mat-checkbox class="example-margin" [disabled]="true">Zones</mat-checkbox>
-    </section>
 </div>
