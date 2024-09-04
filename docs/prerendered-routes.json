@@ -1,0 +1,7 @@
+{
+  "routes": [
+    "/cars",
+    "/home",
+    "/statistics"
+  ]
+}
