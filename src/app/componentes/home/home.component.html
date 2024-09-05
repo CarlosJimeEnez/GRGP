@@ -76,9 +76,9 @@
     </section>
 
     <!-- ZONE OF CONTROL -->
-    <section class="zoneOfControl  pb-5">
+    <section class="zoneOfControl pb-5">
         <div class="container mt-5 pt-5">
-            <div class="row justify-content-center " >
+            <div class="row justify-content-center" >
                 <!-- Fact -->
                 <div class="col-md-6">
                     <div class="live-stats">
@@ -103,25 +103,19 @@
                     </div>
                 </div>
             </div>
-            <div class="row justify-content-center ">
+            <div class="row mt-1 g-3 justify-content-center ">
                 <!-- Columna para Pilots -->
-                <div class="col-md-6 justify-content-center">
-                    <div class="ms-3">
+                <div class="col-md-6 col-12 ">
+                    <div class="">
                         <app-live-leaderboard/>
                     </div>
                 </div>
                 <!-- Alerts -->
                 <div class="col-md-4 col-12">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="live-stats ">
-                                    <app-alerts [alertId]="2"/>
-                                </div>
-                            </div>
-                            
-                        </div>
+                    <div class="live-stats ">
+                        <app-alerts [alertId]="2"/>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -159,24 +153,16 @@
                     </div>
                 </div>
             </div>
-            <div class="row justify-content-center">
+            <div class="row mt-1 g-3 justify-content-center">
                 <!-- Columna para Pilots -->
-                <div class="col-md-6 ms-3">
+                <div class="col-md-6">
                     <div class="pilots">
                         <app-live-leaderboard [color2]="'#ff0000'" [color1]="'#f315c3'"/>
                     </div>
                 </div>
                 <div class="col-md-4 col-12">
-                    <div class="container">
-                        <div class="row">
-                            <!-- Alerts -->
-                            <div class="col-12">
-                                <div class="live-stats ">
-                                    <app-alerts [alertId]="1"/>
-                                </div>
-                            </div>
-                            
-                        </div>
+                    <div class="live-stats ">
+                        <app-alerts [alertId]="1"/>
                     </div>
                 </div>
             </div>
