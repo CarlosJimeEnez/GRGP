@@ -27,8 +27,14 @@ h1 {
     font-weight: bold;
 }
 
-
 .logo-img {   
+    width: 62px;
+    height: auto;
+}
+
+.example-form {
     width: 100%;
-    height: 10vh;
+  }
+.example-full-width {
+    width: 100%;
 }

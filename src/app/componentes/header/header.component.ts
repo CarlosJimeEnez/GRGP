@@ -20,20 +20,21 @@ import {MatFormFieldModule} from '@angular/material/form-field';
   template: `
     <section>
     <div class="container">
-        <div class="row align-items-center ">
-            <div class="col-2 m-2">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-3 d-flex align-items-center m-2">
                 <img class="logo-img" src="images/GRGP_Badge-Monogram-Vertical-Lettering_Colored.svg" alt="" srcset="">
+              </div>
+            
+            <div class="col text-center">
+              <div class="title">
+                <h1>Demo</h1>
+                <div class="date">
+                    <p>../../..</p>
+                  </div>
+              </div>
             </div>
-            <div class="col d-flex align-items-center">
-                <div class="title">
-                    <h1>Demo</h1>
-                    <div class="date">
-                        <p>../../..</p>
-                     </div>
-                 </div>
-            </div>
-            <div class="col d-flex justify-content-end ">
-                
+
+            <div class="col-md-3 col-12 d-flex justify-content-end ">                
               <form class="example-form">
                 <mat-form-field class="example-full-width">
                   <mat-label>
