@@ -54,3 +54,7 @@
     background-color: var(--background-v2);
     border-style: none;
 }
+
+.presentacion {
+    background-color: var(--background);
+}
