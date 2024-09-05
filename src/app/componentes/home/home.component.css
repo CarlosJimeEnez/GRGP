@@ -23,6 +23,11 @@
     border-style: none;
 }
 
+.card {
+    background-color: var(--background);
+    border: none;
+}
+
 .content {
     grid-area: content;
 }
@@ -57,4 +62,13 @@
 
 .presentacion {
     background-color: var(--background);
+}
+
+.accent {
+    color: var(--primary-v2);
+}
+
+.card-text {
+    font-size: large;
+    font-weight: 500;
 }

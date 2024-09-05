@@ -4,6 +4,7 @@ html, body { height: 100%; }
 
 body {
     --primary: #27B2D9; 
+    --primary-v2: #2765d9; 
     --secondary: #8ADCF3; 
     --accent: #3CCFF8; 
     --dashboard: #D6F2FB;
