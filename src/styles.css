@@ -1,8 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-
-body {
+html, body { 
+    height: 100%;
+    background-color: var(--background);
     --primary: #27B2D9; 
     --primary-v2: #2765d9; 
     --secondary: #8ADCF3; 
@@ -15,13 +15,15 @@ body {
     --shadows-v2: #ffffff; 
     --white: #FFFFFF; 
     --danger: rgba(165, 7, 7, 0.877); 
-    --orange: #f37004; 
+
     --m1: 0.25rem;
     --m2: 0.5rem; 
     --m3: 1rem; 
     --m4: 1.5rem; 
     --m5: 3rem; 
-    margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; 
+    
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
 }
 
 h1, h2, h3, h4, h5 {
