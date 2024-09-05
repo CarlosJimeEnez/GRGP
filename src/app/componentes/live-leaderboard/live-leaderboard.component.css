@@ -38,18 +38,9 @@ width: 100px;
     padding-left: 16px;
 }
 
-.mat-column-demo-gap {
-    width: 32px;
-    padding-left: 16px;
-}
-
 
 .mat-column-demo-penalties {
     width: 32px;
     text-align: center;
 }
 
-.mat-column-demo-status {
-    width: 32px;
-    text-align: center;
-}

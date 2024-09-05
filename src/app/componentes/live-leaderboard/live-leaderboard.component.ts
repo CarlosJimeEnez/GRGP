@@ -4,14 +4,13 @@ import { CommonModule } from '@angular/common';
 export interface Pilots {
   position: number,
   name: string, 
-  gap: string, 
   penalties: number,  
   color: string,
 }
 
 const pilotsData: Pilots[] = [
-  {position: 1, name: 'Jenny',gap: 'Leader', penalties: 0, color: '#F315C3'},
-  {position: 3, name: 'Larry',gap: '', penalties: 0, color: '#F31515'}, 
+  {position: 1, name: 'Jenny', penalties: 0, color: '#F315C3'},
+  {position: 3, name: 'Larry', penalties: 0, color: '#f37004'}, 
 ];
 
 @Component({
@@ -43,13 +42,6 @@ const pilotsData: Pilots[] = [
             <td mat-cell *matCellDef="let element"> {{element.name}} </td>
         </ng-container>
         
-       
-        <!-- Gap Column -->
-        <ng-container matColumnDef="demo-gap">
-            <th mat-header-cell *matHeaderCellDef> Gap </th>
-            <td mat-cell *matCellDef="let element"> {{element.gap}} </td>
-        </ng-container>
-        
         <!-- Penalties Column -->
         <ng-container matColumnDef="demo-penalties">
             <th mat-header-cell *matHeaderCellDef> Penalties </th>
@@ -66,6 +58,6 @@ const pilotsData: Pilots[] = [
   styleUrl: './live-leaderboard.component.css'
 })
 export class LiveLeaderboardComponent {
-  displayedColumns: string[] = ['demo-position', 'demo-name', 'demo-gap', 'demo-penalties'];
+  displayedColumns: string[] = ['demo-position', 'demo-name', 'demo-penalties'];
   dataSource = pilotsData
 }

@@ -15,7 +15,7 @@ body {
     --shadows-v2: #ffffff; 
     --white: #FFFFFF; 
     --danger: rgba(165, 7, 7, 0.877); 
-
+    --orange: #f37004; 
     --m1: 0.25rem;
     --m2: 0.5rem; 
     --m3: 1rem; 
@@ -24,9 +24,21 @@ body {
     margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; 
 }
 
+h1, h2, h3, h4, h5 {
+    font-weight: 700;
+}
+
 h1 {
     margin: 0px;
+    font-size: 4.210rem; 
 }
+h2 {font-size: 3.158rem; /* 50.56px */}
+
+h3 {font-size: 2.369rem; /* 37.92px */}
+
+h4 {font-size: 1.777rem; /* 28.48px */}
+
+h5 {font-size: 1.333rem;} 
 
 .bold {
     font-weight: bold;
