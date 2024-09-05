@@ -16,6 +16,7 @@ import { AccordionComponent } from "./accordion/accordion.component";
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+  srcVideoKartId = "videos/KartID.mp4"
   srcVideoCrash = "videos/F31515.mp4"
   srcVideo = "videos/ZoneOfControl.mp4"
   mapCrash = 1

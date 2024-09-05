@@ -3,12 +3,12 @@
     <app-sidebar class="sidebar"/>
     <div class="fluid-container content">
         
-        <section>
+        <section class="mb-5">
             <!-- Kart detection  -->
             <div class="fluid-container crashDetection">
-                <div class="row justify-content-start d-flex">
+                <div class="row justify-content-between d-flex">
                     <!-- Fact -->
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="live-stats">
                             <div class="card crashDetection-card" >
                                 <div class="card-body">
@@ -32,35 +32,15 @@
                         </div>
                     </div>        
                     <!-- Live Map -->
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="">
-                            <app-live-map [src]="srcVideoCrash" [mapId]="1"/>
+                            <app-live-map [src]="srcVideoKartId" [mapId]="1"/>
                         </div>
                     </div>
-                </div>
-                <div class="row justify-content-center d-flex">
-                    <!-- Columna para Pilots -->
-                    <div class="col-md-8 justify-content-center ms-3">
+
+                    <div class="col-3 me-3">
                         <div class="pilots">
-                            <app-live-leaderboard/>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="fluid-container me-3">
-                            <div class="row">
-                                <!-- Alerts -->
-                                <div class="col-12">
-                                    <div class="live-stats ">
-                                        <app-alerts [alertId]="1"/>
-                                    </div>
-                                </div>
-                                <!-- Columna para Live Statics-->
-                                <div class="col-md-12 mt-3 mb-3">
-                                    <div class="live-stats h-100">
-                                        <app-live-statistics/>
-                                    </div>
-                                </div>
-                            </div>
+                            <app-live-leaderboard />
                         </div>
                     </div>
                 </div>
