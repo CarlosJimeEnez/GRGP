@@ -6,12 +6,20 @@ import { LiveStatisticsComponent } from "../live-statistics/live-statistics.comp
 import { AlertsComponent } from "../alerts/alerts.component";
 import { LiveLeaderboardComponent } from "../../componentes/live-leaderboard/live-leaderboard.component";
 import { FooterComponent } from "../footer/footer.component";
-import { AccordionComponent } from "./accordion/accordion.component";
+import {MatTabsModule} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent, LiveMapComponent, LiveStatisticsComponent, AlertsComponent, LiveLeaderboardComponent, FooterComponent, AccordionComponent],
+  imports: [SidebarComponent, 
+    HeaderComponent, 
+    LiveMapComponent, 
+    LiveStatisticsComponent, 
+    AlertsComponent, 
+    LiveLeaderboardComponent, 
+    FooterComponent, 
+    MatTabsModule
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

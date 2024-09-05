@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 export interface Pilots {
@@ -8,18 +8,13 @@ export interface Pilots {
   color: string,
 }
 
-const pilotsData: Pilots[] = [
-  {position: 1, name: 'Jenny', penalties: 0, color: '#F315C3'},
-  {position: 3, name: 'Larry', penalties: 0, color: '#f37004'}, 
-];
-
 @Component({
   selector: 'app-live-leaderboard',
   standalone: true,
   imports: [MatTableModule, CommonModule],
   template: `
-  <div class="card p-3 mb-3 bold">
-    <h5 class="card-title p-3 bold">Live Leaderboard</h5>
+  <div class="card p-1  bold">
+    <h5 class="card-title p-3 pb-0 mb-0 bold">Live Leaderboard</h5>
     <table mat-table [dataSource]="dataSource" class="demo-table">
         <!-- Position Column -->
         <ng-container matColumnDef="demo-position">
@@ -57,7 +52,26 @@ const pilotsData: Pilots[] = [
   `,
   styleUrl: './live-leaderboard.component.css'
 })
-export class LiveLeaderboardComponent {
+export class LiveLeaderboardComponent implements OnInit {
+  pilotsData: Pilots[] = [
+    {position: 1, name: 'Jenny', penalties: 0, color: '#f315c3',},
+    {position: 3, name: 'Larry', penalties: 0, color: "#ff914d",}, 
+  ];
+
   displayedColumns: string[] = ['demo-position', 'demo-name', 'demo-penalties'];
-  dataSource = pilotsData
+  dataSource = this.pilotsData
+
+  @Input() color2: string = "#ff914d";
+  @Input() color1: string = "#f315c3";
+  
+  
+  ngOnInit(): void {
+    this.pilotsData = [
+      {position: 1, name: 'Jenny', penalties: 0, color: this.color1,},
+      {position: 3, name: 'Larry', penalties: 0, color: this.color2}, 
+    ];
+    this.dataSource = this.pilotsData
+  }
+
+  
 }
