@@ -70,6 +70,7 @@ export class LiveMapComponent implements OnInit {
     MapPoints.forEach((point: any) => {
       this.path.add(new YUKA.Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
     })
+
   }
 
   ngAfterViewInit(): void {
@@ -110,7 +111,7 @@ export class LiveMapComponent implements OnInit {
       this.vehicleAgent.setRenderComponent(this.vehicleMesh, this.sync);
       this.vehicleAgent.position.copy(this.path.current())
       this.initialWaypoint = this.vehicleAgent.getWorldPosition(this.initialWaypoint)
-      this.vehicleAgent.maxSpeed = 3
+      this.vehicleAgent.maxSpeed = 2
       
       //Camera Position
       const gimbalPositionX = MapPoints[MapPoints.length/4][0] * this.scaleFactor
@@ -125,7 +126,7 @@ export class LiveMapComponent implements OnInit {
       this.vehicleAgent.steering.add(this.followPathBehavior)
   
       this.onPathBehavior = new YUKA.OnPathBehavior(this.path);
-      this.onPathBehavior.radius = 3;
+      this.onPathBehavior.radius = 1;
       this.vehicleAgent.steering.add(this.onPathBehavior);
   
       this.entityManager = new YUKA.EntityManager();
@@ -183,10 +184,14 @@ export class LiveMapComponent implements OnInit {
 
   private checkCurrentPosition(): boolean {
     this.currentWaypoint = this.vehicleAgent.getWorldPosition(this.currentWaypoint);
-    if (this.currentWaypoint == this.initialWaypoint){
+    const distance = this.currentWaypoint.distanceTo(this.initialWaypoint);
+    const thereshold = 0.39
+
+    if (distance < thereshold) {
       console.log("Se dio una vuelta");
       return true
-    } else {
+    } 
+    else {
       return false
     } 
 
