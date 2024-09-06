@@ -1,8 +1,13 @@
 .card {
     width: 100%;
-    height: 45vh;
+    height: auto;
     border-style: none;
     background-color: var(--background);
+}
+
+.mapContainer {
+    width: 100%;
+    height: 45vh;
 }
 
 h1 {
