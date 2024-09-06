@@ -33,6 +33,10 @@ export class LiveMapComponent implements OnInit {
   hasCompletedLap: boolean = false;
   initialWaypoint!: YUKA.Vector3;
   currentWaypoint!: YUKA.Vector3;
+  lapCount: number = 0; 
+  maxLaps: number = 2; 
+  lastLapTime: number = 0; 
+  lapCooldown: number = 2000; //Cooldown en milisegundos (2)   
 
   scaleFactor: number = 0.03;
   offseX: number = 0;
@@ -57,9 +61,7 @@ export class LiveMapComponent implements OnInit {
 
   controls!: OrbitControls;
 
-  constructor(private zone: NgZone){
-   
-  }
+  constructor(private zone: NgZone){}
 
   ngOnInit(): void {
     //New Path
@@ -73,6 +75,7 @@ export class LiveMapComponent implements OnInit {
 
   }
 
+
   ngAfterViewInit(): void {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.updateDimensions();
@@ -83,7 +86,7 @@ export class LiveMapComponent implements OnInit {
       this.mapContainer.nativeElement.appendChild(this.renderer.domElement)
       
       this.scene = new THREE.Scene();
-      this.renderer.setClearColor(0x27B2D9)
+      this.renderer.setClearColor(0xEFF8FB)
 
       this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Inicializa con un aspect ratio por defecto
       this.camera.position.set(0, 20, 0);
@@ -152,6 +155,7 @@ export class LiveMapComponent implements OnInit {
       }
   }
 
+
   @HostListener('window:resize', ['$event'])
   onResize(event?: Event) {
     if (typeof window !== "undefined") {
@@ -163,38 +167,56 @@ export class LiveMapComponent implements OnInit {
     }
   }
 
+
   private sync(entity: any, renderComponent: any){
     renderComponent.matrix.copy(entity.worldMatrix)
   }
+
 
   private updateDimensions(): void {
     this.width = this.mapContainer.nativeElement.clientWidth;
     this.height = this.mapContainer.nativeElement.clientHeight;
   }
 
+  // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
     this.entityManager.update(delta)
 
-    this.hasCompletedLap = this.checkCurrentPosition()
+    if(this.lapCount >= this.maxLaps){
+      console.log("Se ha completado la carrera")
+      this.stopAnimation()
+      return
+    }
 
+    this.hasCompletedLap = this.checkCurrentPosition()
+    
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
 
+
   private checkCurrentPosition(): boolean {
+    const currentTime = performance.now()
+
     this.currentWaypoint = this.vehicleAgent.getWorldPosition(this.currentWaypoint);
     const distance = this.currentWaypoint.distanceTo(this.initialWaypoint);
     const thereshold = 0.39
 
-    if (distance < thereshold) {
+    if (distance < thereshold && currentTime - this.lastLapTime > this.lapCooldown) {
+      this.lapCount += 1; 
       console.log("Se dio una vuelta");
+      this.lastLapTime = currentTime; 
       return true
     } 
     else {
       return false
     } 
+  }
 
+
+  private stopAnimation(): void{
+    this.renderer.setAnimationLoop(null)
   }
 
 }
