@@ -1,109 +1,16 @@
 <app-header class="header"/>
 <div class="fluid-container">
-    <section class="mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 col-lg-7">
-                    <div class="card" style="width: 100%;">
-                        <div class="card-body">
-                            <h2 class="card-title accent">Real-Time Control and Tracking System for Indoor Go-Karts</h2>
-                            <h6 class="card-subtitle mb-2 text-body-secondary">System Overview</h6>
-                            <p class="card-text">
-                                Accurate Timing and Scoring: RTLS provides precise lap timing and scoring, ensuring fair competition and accurate results.
-                                <br>
-                                <br>
-                                Safety Enhancements: By tracking the exact position of each kart in real-time, the system can quickly identify and respond to accidents or stalled karts, improving overall safety.
-                                <br>
-                                <br>
-                                Race Management: RTLS allows for better race management by providing real-time data on kart positions, speeds, and lap times, which can be used to make informed decisions during the race.
-                        </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col d-flex justify-content-center align-items-center">
-                    <h1><app-live-map [src]="srcVideoKartId" [mapId]="1"/></h1>
-                </div>
-            </div>
-
-            <div class="row my-5 py-5">
-                <div class="col-12 text-center">
-                    <h1 class="card-title accent"> Why GRGP? </h1>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <section class="mb-5">
-        <!-- Kart detection  -->
-        <div class="container">
-            <div class="row justify-content-center">
-                <!-- Fact -->
-                <div class="col-md-5">
-                    <div class="live-stats">
-                        <div class="card crashDetection-card" >
-                            <div class="card-body">
-                                <h3 class="card-title accent">Kart identification</h3>
-                                <p class="card-subtitle mb-2 text-body-secondary">
-                                    Our kart identification system uses UWB (Ultra Wideband) technology to provide accurate, real-time location of each kart on the track.
-                                </p>
-                                    
-                                
-                                <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
-                                    <mat-tab label="Unique ID">Each kart is equipped with a UWB tag that emits a unique identifier.</mat-tab>
-                                    <mat-tab label="Precise Localization">UWB technology allows the exact location of the kart to be determined in real time.</mat-tab>
-                                </mat-tab-group>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>        
-                <!-- Live Map -->
-                <div class="col-md-4">
-                    <div class="">
-                        <app-live-map [src]="srcVideoKartId" [mapId]="1"/>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-12 ">
-                    <div class="pilots">
-                        <app-live-leaderboard [color1]="'#f315c3'" [color2]="'#ff914d'"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- ZONE OF CONTROL -->
-    <section class="zoneOfControl pb-5">
-        <div class="container mt-5 pt-5">
+    <section class="pb-5">
+        <div class="container mt-y">
             <div class="row justify-content-center" >
-                <!-- Fact -->
-                <div class="col-md-6">
-                    <div class="live-stats">
-                        <div class="card zoneOfControl-card">
-                            <div class="card-body">
-                                <h3 class="card-title accent">Improved safety through speed control</h3>
-                                <p class="card-subtitle mb-2 text-body-secondary">
-                                    Our speed monitoring tool, based on an advanced radio protocol, offers a revolutionary solution to improve road safety. Designed to reduce accidents
-                                </p>
-                                <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
-                                    <mat-tab label="Accident Reduction">By maintaining adequate and constant speeds, the likelihood of accidents is reduced.</mat-tab>
-                                    <mat-tab label="Continuous Monitoring">The data is updated automatically, providing accurate and up-to-date information.</mat-tab>
-                                </mat-tab-group>
-                            </div>
-                        </div>
-                    </div>
-                </div>        
                 <!-- Live Map -->
-                <div class="col-md-5">
-                    <div class="">
-                        <app-live-map [src]="srcVideo" [mapId]="2"/>
-                    </div>
+                <div class="col-md-5">                    
+                        <app-live-map/>
                 </div>
             </div>
-            <div class="row mt-1 g-3 justify-content-center ">
+            <div class="row g-3 justify-content-center ">
                 <!-- Columna para Pilots -->
                 <div class="col-md-6 col-12 ">
                     <div class="">
@@ -114,59 +21,11 @@
                 <div class="col-md-4 col-12">
                     <div class="live-stats ">
                         <app-alerts [alertId]="2"/>
-                    </div>
-                    
+                    </div> 
                 </div>
             </div>
         </div>
     </section>
-    
 
-    <section>
-        <!-- Crash detection  -->
-        <div class="container mt-5 pb-5">
-            <div class="row justify-content-center ">
-                <!-- Fact -->
-                <div class="col-md-6">
-                    <div class="live-stats">
-                        <div class="card crashDetection-card" >
-                            <div class="card-body">
-                            <h3 class="card-title accent">Crash Detection and Real-Time </h3>
-                            <p class="card-subtitle mb-2 text-body-secondary">
-                                Our system uses accelerometers to detect sudden impacts. 
-                                When a crash is detected, it sends alerts and records the location using GPS. This ensures quick response and improved safety.
-                                </p>
-
-                                <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
-                                    <mat-tab label="Immediate Response">Detects crash location, crash force direction and severity in real time.</mat-tab>
-                                    <mat-tab label="Improved Safety">Ensures rapid response in case of accidents, protecting drivers.</mat-tab>
-                                </mat-tab-group>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>        
-                <!-- Live Map -->
-                <div class="col-md-5">
-                    <div class="">
-                        <app-live-map [src]="srcVideoCrash" [mapId]="1"/>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-1 g-3 justify-content-center">
-                <!-- Columna para Pilots -->
-                <div class="col-md-6">
-                    <div class="pilots">
-                        <app-live-leaderboard [color2]="'#ff0000'" [color1]="'#f315c3'"/>
-                    </div>
-                </div>
-                <div class="col-md-4 col-12">
-                    <div class="live-stats ">
-                        <app-alerts [alertId]="1"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 </div>
 <div class="footer"> <app-footer/> </div>
