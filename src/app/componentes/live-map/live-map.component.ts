@@ -30,6 +30,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 export class LiveMapComponent implements OnInit {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
 
+  // Primero, crea la geometría del círculo
+   radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
+   widthSegments: number = 12; // Segmentos horizontales
+   heightSegments: number = 12; // Segmentos verticales
+
   hasCompletedLap: boolean = false;
   initialWaypoint!: Vector3;
   currentWaypoint!: Vector3;
@@ -71,6 +76,7 @@ export class LiveMapComponent implements OnInit {
     this.path = new Path();
     this.initialWaypoint = new Vector3();
     this.currentWaypoint = new Vector3();
+    this.vehicleGeometry = new SphereGeometry(this.radius, this.widthSegments, this.heightSegments)
     MapPoints.forEach((point: any) => {
       this.path.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
     })
@@ -86,9 +92,7 @@ export class LiveMapComponent implements OnInit {
       this.renderer = new WebGLRenderer({ antialias: true });
       this.renderer.setSize(this.width, this.height);
       this.mapContainer.nativeElement.appendChild(this.renderer.domElement)
-      
-      
-      this.renderer.setClearColor(0xEFF8FB)
+      this.renderer.setClearColor(0xd8eff7)
 
       this.camera = new PerspectiveCamera(75, 1, 0.1, 1000); // Inicializa con un aspect ratio por defecto
       this.camera.position.set(0, 20, 0);
@@ -97,14 +101,7 @@ export class LiveMapComponent implements OnInit {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true; // Para suavizar el movimiento
       this.controls.dampingFactor = 0.05;
-      
-
-      // Primero, crea la geometría del círculo
-      const radius = 0.5; // Radio de la esfera, ajusta según sea necesario
-      const widthSegments = 5; // Segmentos horizontales
-      const heightSegments = 5; // Segmentos verticales
-      this.vehicleGeometry = new SphereGeometry(radius, widthSegments, heightSegments)
-
+  
       // Crear el material para la esfera
       this.vehicleMaterial = new MeshBasicMaterial({ color: 0x00ff00 })
       this.vehicleMesh = new Mesh(this.vehicleGeometry, this.vehicleMaterial);
