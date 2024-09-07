@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone, Input } from '@angular/core';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshBasicMaterial, Mesh, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial } from 'three';
@@ -29,6 +29,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 export class LiveMapComponent implements OnInit {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
+  @Input() player1Color: number = 0xf315c3
+  @Input() player2Color: number = 0xff914d
 
   // Primero, crea la geometría del círculo
    radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
@@ -71,16 +73,41 @@ export class LiveMapComponent implements OnInit {
 
   ngOnInit(): void {
     this.scene = new Scene();
-    //New Path
     this.time = new Time(); 
     this.path = new Path();
     this.initialWaypoint = new Vector3();
     this.currentWaypoint = new Vector3();
-    this.vehicleGeometry = new SphereGeometry(this.radius, this.widthSegments, this.heightSegments)
+    
+    //New Path
     MapPoints.forEach((point: any) => {
       this.path.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
     })
+    this.path.loop = true;
 
+    // Primer jugador
+    this.vehicleGeometry = new SphereGeometry(this.radius, this.widthSegments, this.heightSegments)
+    this.vehicleMaterial = new MeshBasicMaterial({ color: this.player1Color })
+    this.vehicleMesh = new Mesh(this.vehicleGeometry, this.vehicleMaterial);
+    this.vehicleMesh.matrixAutoUpdate = false;
+    
+    //Jugador -> New VEHICLE
+    this.vehicleAgent = new Vehicle();
+    this.vehicleAgent.setRenderComponent(this.vehicleMesh, this.sync);
+    this.vehicleAgent.position.copy(this.path.current())
+    this.initialWaypoint = this.vehicleAgent.getWorldPosition(this.initialWaypoint)
+    this.vehicleAgent.maxSpeed = 2
+
+    //Behavior
+    this.followPathBehavior = new FollowPathBehavior(this.path, 0.5);
+    this.vehicleAgent.steering.add(this.followPathBehavior)
+
+    this.onPathBehavior = new OnPathBehavior(this.path);
+    this.onPathBehavior.radius = 1;
+    this.vehicleAgent.steering.add(this.onPathBehavior);
+
+    this.entityManager = new EntityManager();
+    this.entityManager.add(this.vehicleAgent);
+   
   }
 
 
@@ -102,51 +129,30 @@ export class LiveMapComponent implements OnInit {
       this.controls.enableDamping = true; // Para suavizar el movimiento
       this.controls.dampingFactor = 0.05;
       // Restringir la rotación en el eje vertical
-this.controls.minPolarAngle = Math.PI / 4; // Mínimo ángulo polar
-this.controls.maxPolarAngle = Math.PI / 3; // Máximo ángulo polar
-      // Crear el material para la esfera
-      this.vehicleMaterial = new MeshBasicMaterial({ color: 0x00ff00 })
-      this.vehicleMesh = new Mesh(this.vehicleGeometry, this.vehicleMaterial);
-      this.vehicleMesh.matrixAutoUpdate = false;
-      this.scene.add(this.vehicleMesh);
-  
-      //New VEHICLE
-      this.vehicleAgent = new Vehicle();
-      this.vehicleAgent.setRenderComponent(this.vehicleMesh, this.sync);
-      this.vehicleAgent.position.copy(this.path.current())
-      this.initialWaypoint = this.vehicleAgent.getWorldPosition(this.initialWaypoint)
-      this.vehicleAgent.maxSpeed = 2
+      this.controls.minPolarAngle = Math.PI / 6; // Mínimo ángulo polar
+      this.controls.maxPolarAngle = Math.PI / 2.5; // Máximo ángulo polar
+    
       
+  
       //Camera Position
       const gimbalPositionX = MapPoints[MapPoints.length/4][0] * this.scaleFactor
       const gimbalPositionY = MapPoints[MapPoints.length/4][1] * this.scaleFactor
       this.camera.lookAt(gimbalPositionX, 0, gimbalPositionY);
       this.controls.target.set(gimbalPositionX, 0, gimbalPositionY)
       this.controls.update();
-      this.path.loop = true;
-
-      //Behavior
-      this.followPathBehavior = new FollowPathBehavior(this.path, 0.5);
-      this.vehicleAgent.steering.add(this.followPathBehavior)
-  
-      this.onPathBehavior = new OnPathBehavior(this.path);
-      this.onPathBehavior.radius = 1;
-      this.vehicleAgent.steering.add(this.onPathBehavior);
-  
-      this.entityManager = new EntityManager();
-      this.entityManager.add(this.vehicleAgent);
-
+      
       // Waypoints to render
       const position: any = [];
       MapPoints.forEach((waypoint: any) => {
         position.push(waypoint[0] * this.scaleFactor, 0, waypoint[1] * this.scaleFactor) 
       })
-      
       const lineGeometry = new BufferGeometry();
       lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
 
       const lineMaterial = new LineBasicMaterial({color: 0x000000});
       const lines = new LineLoop(lineGeometry, lineMaterial);
+
+      this.scene.add(this.vehicleMesh);
       this.scene.add(lines);
 
       // this.renderer.setAnimationLoop(this.animate())
@@ -155,7 +161,6 @@ this.controls.maxPolarAngle = Math.PI / 3; // Máximo ángulo polar
       })
       }
   }
-
 
   @HostListener('window:resize', ['$event'])
   onResize(event?: Event) {
@@ -190,9 +195,7 @@ this.controls.maxPolarAngle = Math.PI / 3; // Máximo ángulo polar
       this.stopAnimation()
       return
     }
-
     this.hasCompletedLap = this.checkCurrentPosition()
-    
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
