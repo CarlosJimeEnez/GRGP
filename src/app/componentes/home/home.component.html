@@ -1,31 +1,45 @@
 <app-header class="header"/>
-<div class="fluid-container">
+<div class="container-fluid">
+    <div class="row">
 
-    <!-- ZONE OF CONTROL -->
-    <section class="pb-5">
-        <div class="container mt-y">
-            <div class="row justify-content-center" >
-                <!-- Live Map -->
-                <div class="col-md-5">                    
-                        <app-live-map/>
-                </div>
-            </div>
-            <div class="row g-3 justify-content-center ">
-                <!-- Columna para Pilots -->
-                <div class="col-md-6 col-12 ">
-                    <div class="">
-                        <app-live-leaderboard/>
-                    </div>
-                </div>
-                <!-- Alerts -->
-                <div class="col-md-4 col-12">
-                    <div class="live-stats ">
-                        <app-alerts [alertId]="2"/>
-                    </div> 
-                </div>
-            </div>
+        <!-- Sidebar Content -->
+        <div class="col-md-1 d-none d-md-block">
+            <app-sidebar/>
         </div>
-    </section>
 
+        <!-- Main Content -->
+        <div class="col-md-11">
+            <section>
+                <div class="container my-5">
+                    
+                    <div class="row g-2 mb-2 justify-content-start" >
+                        <!-- Live Map -->
+                        <div class="col-md-6">                    
+                            <app-live-map/>
+                        </div>
+                        <!-- Live Map -->
+                        <div class="col-md-6 d-flex flex-column">
+                            <div class="row g-3 flex-grow-1">
+                                <div class="col-12">
+                                    <app-live-statistics/>
+                                </div>                    
+                                <div class="col-12">
+                                    <app-alerts/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 justify-content-start ">
+                        <!-- Columna para Pilots -->
+                        <div class="col-md-12 ">                            
+                            <app-live-leaderboard/>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </div>
 </div>
 <div class="footer"> <app-footer/> </div>

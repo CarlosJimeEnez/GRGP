@@ -7,7 +7,18 @@ import { AlertsService } from '../../services/alerts.service';
   selector: 'app-alerts',
   standalone: true,
   imports: [MatBadgeModule, MatIcon],
-  templateUrl: './alerts.component.html',
+  template: `
+  <div class="card">
+    <h5 class="card-title p-3"> Alerts </h5>
+    <div class="container">
+      <div class="row align-items-center m-1">
+        <div class="alert alert-info" role="alert">
+          A simple info alert—check it out!
+        </div>
+      </div>
+    </div>
+  </div>
+`, 
   styleUrl: './alerts.component.css'
 })
 export class AlertsComponent implements OnInit {

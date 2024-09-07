@@ -12,10 +12,10 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
   imports: [MatCheckboxModule, CommonModule],
   template: `
     <div class="card">
-      <h4 class="card-title">Live Map</h4>
+      <h4 class="card-title p-4">Live Map</h4>
       <div class="row">
-        <div class="col-12 d-flex align-items-center">
-          <div #mapContainer class="mapContainer">
+        <div class="col-12 d-flex mapContainer align-items-center">
+          <div #mapContainer class="mapThreejs">
         </div>
       </div>
       </div>
@@ -92,7 +92,7 @@ export class LiveMapComponent implements OnInit {
       this.renderer = new WebGLRenderer({ antialias: true });
       this.renderer.setSize(this.width, this.height);
       this.mapContainer.nativeElement.appendChild(this.renderer.domElement)
-      this.renderer.setClearColor(0xd8eff7)
+      this.renderer.setClearColor(0xffffff)
 
       this.camera = new PerspectiveCamera(75, 1, 0.1, 1000); // Inicializa con un aspect ratio por defecto
       this.camera.position.set(0, 20, 0);
@@ -101,7 +101,9 @@ export class LiveMapComponent implements OnInit {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true; // Para suavizar el movimiento
       this.controls.dampingFactor = 0.05;
-  
+      // Restringir la rotación en el eje vertical
+this.controls.minPolarAngle = Math.PI / 4; // Mínimo ángulo polar
+this.controls.maxPolarAngle = Math.PI / 3; // Máximo ángulo polar
       // Crear el material para la esfera
       this.vehicleMaterial = new MeshBasicMaterial({ color: 0x00ff00 })
       this.vehicleMesh = new Mesh(this.vehicleGeometry, this.vehicleMaterial);

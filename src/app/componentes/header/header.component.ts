@@ -5,6 +5,7 @@ import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { SidebarComponent } from "../sidebar/sidebar.component";
 
 @Component({
   selector: 'app-header',
@@ -15,17 +16,24 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatInputModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
-    MatIconModule
-  ],
+    MatIconModule,
+    SidebarComponent
+],
   template: `
     <section>
-    <div class="container">
-        <div class="row align-items-center justify-content-between">
+      <div class="fluid-container">
+          <div class="row align-items-center justify-content-start">
+            <div class="col-2 d-flex d-md-none  justify-content-center">
+              <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <mat-icon >menu</mat-icon>
+              </button>
+            </div>
+
             <div class="col-3 d-flex align-items-center m-2">
                 <img class="logo-img" src="images/GRGP_Badge-Monogram-Vertical-Lettering_Colored.svg" alt="" srcset="">
               </div>
             
-            <div class="col text-center">
+            <div class="col-6 text-center">
               <div class="title">
                 <h1>Demo</h1>
                 <div class="date">
@@ -33,35 +41,66 @@ import {MatFormFieldModule} from '@angular/material/form-field';
                   </div>
               </div>
             </div>
+          </div>
+      </div>
 
-            <div class="col-md-3 col-12 d-flex justify-content-end ">                
-              <form class="example-form">
-                <mat-form-field class="example-full-width">
-                  <mat-label>
-                    Search
-                  </mat-label>
-
-                  <input type="text"
-                          placeholder=""
-                          aria-label=""
-                          matInput
-                          [formControl]="myControl"
-                          [matAutocomplete]="auto">
-                  <mat-autocomplete #auto="matAutocomplete">
-                    @for (option of options; track option) {
-                      <mat-option [value]="option">{{option}}</mat-option>
-                    }
-                  </mat-autocomplete>
-                </mat-form-field>
-              </form>
-
-               
-            </div>
+      <div class="offcanvas offcanvas-start custom-width" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+          
         </div>
-    </div>
-</section>  
+        <div class="offcanvas-body">
+          <div>
+            <app-sidebar/>
+          </div>          
+        </div>
+      </div>
+
+    </section>  
   `, 
-  styleUrl: './header.component.css'
+  styles: `
+    .header-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--m4);
+    margin-left: var(--m4);
+}
+
+.custom-width {
+  width: 15vh,
+  
+}
+
+h1 {
+    margin: 0px;
+}
+
+.date {
+    margin: 0;
+}
+
+.icon{
+    margin: var(--m2);
+}
+
+.title {
+    font-weight: bold;
+}
+
+.logo-img {   
+    width: 62px;
+    height: auto;
+}
+
+.example-form {
+    width: 100%;
+}
+
+.example-full-width {
+    width: 100%;
+}
+  `,
 })
 export class HeaderComponent {
   myControl = new FormControl("");
