@@ -89,7 +89,7 @@ h1 {
 }
 
 .logo-img {   
-    width: 62px;
+    width: 50px;
     height: auto;
 }
 
