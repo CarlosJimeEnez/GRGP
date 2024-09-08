@@ -155,12 +155,8 @@ export class LiveMapComponent implements OnInit {
           1, 
           this.path2
         )
-      this.carrera = new Carrera([this.player1, this.player2])
-      
-    // Stop the app if lapCount > maxLaps
-    for (let player of this.carrera.corredores){
-      console.log(player)
-    }
+
+      this.carrera = new Carrera([this.player1, this.player2]) 
 
       this.scene.add(this.player1.vehicleMesh);
       this.scene.add(this.player2.vehicleMesh)
@@ -198,16 +194,17 @@ export class LiveMapComponent implements OnInit {
   // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
-    this.player2.entityManager.update(delta)
 
-    if(this.lapCount <= this.maxLaps){
-      console.log("Se ha completado la carrera")
-      this.player1.entityManager.update(delta)
-
-      this.hasCompletedLap = this.checkCurrentPosition()
-      // this.stopAnimation()
-      
+    // Stop the app if lapCount > maxLaps
+    for(let player of this.carrera.corredores){
+      if(player.lapCount < this.maxLaps){
+        player.checkLapCount()
+        player.entityManager.update(delta)
+      }
     }
+    
+    this.hasCompletedLap = this.checkCurrentPosition()
+    // this.stopAnimation()
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
@@ -222,7 +219,6 @@ export class LiveMapComponent implements OnInit {
 
     if (distance < thereshold && currentTime - this.lastLapTime > this.lapCooldown) {
       this.lapCount += 1; 
-      console.log("Se dio una vuelta");
       this.lastLapTime = currentTime; 
       return true
     } 
