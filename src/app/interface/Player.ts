@@ -11,7 +11,9 @@ export class Player {
     heightSegments: number;
     maxSpeed: number;
     initialWaypoint: Vector3;
-    
+    followPathBehavior: FollowPathBehavior; 
+    onPathBehavior: OnPathBehavior; 
+    entityManager: EntityManager
 
     constructor(initialWaypoint: Vector3 ,playerColor: number, radius: number, widthSegments: number, heightSegments: number, maxSpeed: number, path: Path) {
         this.initialWaypoint = initialWaypoint
@@ -34,6 +36,17 @@ export class Player {
         this.vehicleAgent.position.copy(path.current())
         this.initialWaypoint = this.vehicleAgent.getWorldPosition(initialWaypoint)
         this.vehicleAgent.maxSpeed = this.maxSpeed;
+        
+        //Behavior
+        this.followPathBehavior = new FollowPathBehavior(path, 0.5);
+        this.vehicleAgent.steering.add(this.followPathBehavior)
+
+        this.onPathBehavior = new OnPathBehavior(path);
+        this.onPathBehavior.radius = 1;
+        this.vehicleAgent.steering.add(this.onPathBehavior);
+
+        this.entityManager = new EntityManager();
+        this.entityManager.add(this.vehicleAgent);
     }
 
     // Método para establecer la posición inicial del jugador

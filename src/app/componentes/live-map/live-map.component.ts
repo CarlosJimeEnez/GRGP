@@ -5,6 +5,7 @@ import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshBasicMater
 import { Vehicle, Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 import { MapPoints } from './vectors';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Player } from '../../interface/Player';
 
 @Component({
   selector: 'app-live-map',
@@ -54,21 +55,20 @@ export class LiveMapComponent implements OnInit {
   time!: Time;  
   width!: number;
   height!: number;
-  renderer!: any;
-  
+  renderer!: any;  
+  path!: Path; 
+  controls!: OrbitControls;
+
+  player1!: Player
   vehicleGeometry!: SphereGeometry;
   vehicleMaterial!: MeshBasicMaterial;
   vehicleMesh!: Mesh;
-  
   vehicleAgent!: Vehicle;
-  path!: Path; 
   
   followPathBehavior!: FollowPathBehavior;
   onPathBehavior!: OnPathBehavior;
   entityManager!: EntityManager;
-
-  controls!: OrbitControls;
-
+  
   constructor(private zone: NgZone){}
 
   ngOnInit(): void {
@@ -84,29 +84,38 @@ export class LiveMapComponent implements OnInit {
     })
     this.path.loop = true;
 
-    // Primer jugador
-    this.vehicleGeometry = new SphereGeometry(this.radius, this.widthSegments, this.heightSegments)
-    this.vehicleMaterial = new MeshBasicMaterial({ color: this.player1Color })
-    this.vehicleMesh = new Mesh(this.vehicleGeometry, this.vehicleMaterial);
-    this.vehicleMesh.matrixAutoUpdate = false;
+    this.player1 = new Player
+    (
+      this.initialWaypoint, 
+      this.player1Color, 
+      this.radius, 
+      this.widthSegments, 
+      this.heightSegments, 
+      2, 
+      this.path
+    )
+
+    // // Primer jugador
+    // this.vehicleGeometry = new SphereGeometry(this.radius, this.widthSegments, this.heightSegments)
+    // this.vehicleMaterial = new MeshBasicMaterial({ color: this.player1Color })
+    // this.vehicleMesh = new Mesh(this.vehicleGeometry, this.vehicleMaterial);
+    // this.vehicleMesh.matrixAutoUpdate = false;
     
-    //Jugador -> New VEHICLE
-    this.vehicleAgent = new Vehicle();
-    this.vehicleAgent.setRenderComponent(this.vehicleMesh, this.sync);
-    this.vehicleAgent.position.copy(this.path.current())
-    this.initialWaypoint = this.vehicleAgent.getWorldPosition(this.initialWaypoint)
-    this.vehicleAgent.maxSpeed = 2
+    // //Jugador -> New VEHICLE
+    // this.vehicleAgent = new Vehicle();
+    // this.vehicleAgent.setRenderComponent(this.vehicleMesh, this.sync);
+    // this.vehicleAgent.position.copy(this.path.current())
+    // this.initialWaypoint = this.vehicleAgent.getWorldPosition(this.initialWaypoint)
+    // this.vehicleAgent.maxSpeed = 2
 
     //Behavior
-    this.followPathBehavior = new FollowPathBehavior(this.path, 0.5);
-    this.vehicleAgent.steering.add(this.followPathBehavior)
+    // this.followPathBehavior = new FollowPathBehavior(this.path, 0.5);
+    // this.player1.vehicleAgent.steering.add(this.followPathBehavior)
 
-    this.onPathBehavior = new OnPathBehavior(this.path);
-    this.onPathBehavior.radius = 1;
-    this.vehicleAgent.steering.add(this.onPathBehavior);
+  
 
-    this.entityManager = new EntityManager();
-    this.entityManager.add(this.vehicleAgent);
+    // this.entityManager = new EntityManager();
+    // this.entityManager.add(this.vehicleAgent);
    
   }
 
@@ -152,7 +161,7 @@ export class LiveMapComponent implements OnInit {
       const lineMaterial = new LineBasicMaterial({color: 0x000000});
       const lines = new LineLoop(lineGeometry, lineMaterial);
 
-      this.scene.add(this.vehicleMesh);
+      this.scene.add(this.player1.vehicleMesh);
       this.scene.add(lines);
 
       // this.renderer.setAnimationLoop(this.animate())
@@ -187,7 +196,7 @@ export class LiveMapComponent implements OnInit {
   // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
-    this.entityManager.update(delta)
+    this.player1.entityManager.update(delta)
 
     // Stop the app if lapCount > maxLaps
     if(this.lapCount >= this.maxLaps){
@@ -204,7 +213,7 @@ export class LiveMapComponent implements OnInit {
   private checkCurrentPosition(): boolean {
     const currentTime = performance.now()
 
-    this.currentWaypoint = this.vehicleAgent.getWorldPosition(this.currentWaypoint);
+    this.currentWaypoint = this.player1.vehicleAgent.getWorldPosition(this.currentWaypoint);
     const distance = this.currentWaypoint.distanceTo(this.initialWaypoint);
     const thereshold = 0.39
 
