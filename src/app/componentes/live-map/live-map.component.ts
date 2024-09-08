@@ -138,7 +138,7 @@ export class LiveMapComponent implements OnInit {
       this.controls.enableDamping = true; // Para suavizar el movimiento
       this.controls.dampingFactor = 0.05;
       // Restringir la rotación en el eje vertical
-      this.controls.minPolarAngle = Math.PI / 6; // Mínimo ángulo polar
+      this.controls.minPolarAngle = 0; // Mínimo ángulo polar
       this.controls.maxPolarAngle = Math.PI / 2.5; // Máximo ángulo polar
     
       
