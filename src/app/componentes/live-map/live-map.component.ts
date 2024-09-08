@@ -202,34 +202,9 @@ export class LiveMapComponent implements OnInit {
         player.entityManager.update(delta)
       }
     }
-    
-    this.hasCompletedLap = this.checkCurrentPosition()
+     
     // this.stopAnimation()
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
-
-
-  private checkCurrentPosition(): boolean {
-    const currentTime = performance.now()
-
-    this.currentWaypoint = this.player1.vehicleAgent.getWorldPosition(this.currentWaypoint);
-    const distance = this.currentWaypoint.distanceTo(this.initialWaypoint);
-    const thereshold = 0.39
-
-    if (distance < thereshold && currentTime - this.lastLapTime > this.lapCooldown) {
-      this.lapCount += 1; 
-      this.lastLapTime = currentTime; 
-      return true
-    } 
-    else {
-      return false
-    } 
-  }
-
-
-  // private stopAnimation(): void{
-  //   this.renderer.setAnimationLoop(null)
-  // }
-
 }
