@@ -6,11 +6,10 @@ import { Component } from '@angular/core';
   imports: [],
   template: `
   <div class="container">
-    <h1>as</h1>
+    <h1></h1>
     
   </div>
   `, 
-  styleUrl: './footer.component.css'
 })
 export class FooterComponent {
 
