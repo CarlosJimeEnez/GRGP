@@ -6,6 +6,7 @@ import { Vehicle, Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager,
 import { MapPoints } from './vectors';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Player } from '../../interface/Player';
+import { Carrera } from '../../interface/Carrera';
 
 @Component({
   selector: 'app-live-map',
@@ -34,9 +35,9 @@ export class LiveMapComponent implements OnInit {
   @Input() player2Color: number = 0xff914d
 
   // Primero, crea la geometría del círculo
-   radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
-   widthSegments: number = 12; // Segmentos horizontales
-   heightSegments: number = 12; // Segmentos verticales
+  radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
+  widthSegments: number = 12; // Segmentos horizontales
+  heightSegments: number = 12; // Segmentos verticales
 
   hasCompletedLap: boolean = false;
   initialWaypoint!: Vector3;
@@ -56,15 +57,14 @@ export class LiveMapComponent implements OnInit {
   width!: number;
   height!: number;
   renderer!: any;  
-  path!: Path; 
+  path!: Path;
+  path2!: Path;  
   controls!: OrbitControls;
 
   player1!: Player
-  vehicleGeometry!: SphereGeometry;
-  vehicleMaterial!: MeshBasicMaterial;
-  vehicleMesh!: Mesh;
-  vehicleAgent!: Vehicle;
-  
+  player2!: Player 
+  carrera!: Carrera
+
   followPathBehavior!: FollowPathBehavior;
   onPathBehavior!: OnPathBehavior;
   entityManager!: EntityManager;
@@ -75,6 +75,7 @@ export class LiveMapComponent implements OnInit {
     this.scene = new Scene();
     this.time = new Time(); 
     this.path = new Path();
+
     this.initialWaypoint = new Vector3();
     this.currentWaypoint = new Vector3();
     
@@ -84,46 +85,18 @@ export class LiveMapComponent implements OnInit {
     })
     this.path.loop = true;
 
-    this.player1 = new Player
-    (
-      this.initialWaypoint, 
-      this.player1Color, 
-      this.radius, 
-      this.widthSegments, 
-      this.heightSegments, 
-      2, 
-      this.path
-    )
-
-    // // Primer jugador
-    // this.vehicleGeometry = new SphereGeometry(this.radius, this.widthSegments, this.heightSegments)
-    // this.vehicleMaterial = new MeshBasicMaterial({ color: this.player1Color })
-    // this.vehicleMesh = new Mesh(this.vehicleGeometry, this.vehicleMaterial);
-    // this.vehicleMesh.matrixAutoUpdate = false;
-    
-    // //Jugador -> New VEHICLE
-    // this.vehicleAgent = new Vehicle();
-    // this.vehicleAgent.setRenderComponent(this.vehicleMesh, this.sync);
-    // this.vehicleAgent.position.copy(this.path.current())
-    // this.initialWaypoint = this.vehicleAgent.getWorldPosition(this.initialWaypoint)
-    // this.vehicleAgent.maxSpeed = 2
-
-    //Behavior
-    // this.followPathBehavior = new FollowPathBehavior(this.path, 0.5);
-    // this.player1.vehicleAgent.steering.add(this.followPathBehavior)
-
-  
-
-    // this.entityManager = new EntityManager();
-    // this.entityManager.add(this.vehicleAgent);
-   
+    this.path2 = new Path()
+    MapPoints.forEach((point: any) => {
+      this.path2.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path2.loop = true;
   }
 
 
   ngAfterViewInit(): void {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.updateDimensions();
-
+      
       // Solo se ejecuta en el navegador
       this.renderer = new WebGLRenderer({ antialias: true });
       this.renderer.setSize(this.width, this.height);
@@ -161,7 +134,36 @@ export class LiveMapComponent implements OnInit {
       const lineMaterial = new LineBasicMaterial({color: 0x000000});
       const lines = new LineLoop(lineGeometry, lineMaterial);
 
+      this.player1 = new Player
+        (
+          this.initialWaypoint, 
+          this.player1Color, 
+          this.radius, 
+          this.widthSegments, 
+          this.heightSegments, 
+          2, 
+          this.path
+        )
+        
+      this.player2 = new Player
+        (
+          this.initialWaypoint, 
+          this.player2Color, 
+          this.radius, 
+          this.widthSegments, 
+          this.heightSegments, 
+          1, 
+          this.path2
+        )
+      this.carrera = new Carrera([this.player1, this.player2])
+      
+    // Stop the app if lapCount > maxLaps
+    for (let player of this.carrera.corredores){
+      console.log(player)
+    }
+
       this.scene.add(this.player1.vehicleMesh);
+      this.scene.add(this.player2.vehicleMesh)
       this.scene.add(lines);
 
       // this.renderer.setAnimationLoop(this.animate())
@@ -196,15 +198,16 @@ export class LiveMapComponent implements OnInit {
   // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
-    this.player1.entityManager.update(delta)
+    this.player2.entityManager.update(delta)
 
-    // Stop the app if lapCount > maxLaps
-    if(this.lapCount >= this.maxLaps){
+    if(this.lapCount <= this.maxLaps){
       console.log("Se ha completado la carrera")
-      this.stopAnimation()
-      return
+      this.player1.entityManager.update(delta)
+
+      this.hasCompletedLap = this.checkCurrentPosition()
+      // this.stopAnimation()
+      
     }
-    this.hasCompletedLap = this.checkCurrentPosition()
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
@@ -229,8 +232,8 @@ export class LiveMapComponent implements OnInit {
   }
 
 
-  private stopAnimation(): void{
-    this.renderer.setAnimationLoop(null)
-  }
+  // private stopAnimation(): void{
+  //   this.renderer.setAnimationLoop(null)
+  // }
 
 }

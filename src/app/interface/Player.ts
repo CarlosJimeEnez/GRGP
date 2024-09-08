@@ -1,7 +1,11 @@
 import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshBasicMaterial, Mesh, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial } from 'three';
 import { Vehicle, Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 
+
+
 export class Player {
+    lapCount: number; 
+
     vehicleGeometry: SphereGeometry;
     vehicleMaterial: MeshBasicMaterial;
     vehicleMesh: Mesh;
@@ -16,6 +20,7 @@ export class Player {
     entityManager: EntityManager
 
     constructor(initialWaypoint: Vector3 ,playerColor: number, radius: number, widthSegments: number, heightSegments: number, maxSpeed: number, path: Path) {
+        this.lapCount = 0 
         this.initialWaypoint = initialWaypoint
         this.radius = radius;
         this.widthSegments = widthSegments;
