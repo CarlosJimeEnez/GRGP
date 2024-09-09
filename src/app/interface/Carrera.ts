@@ -5,7 +5,5 @@ export class Carrera {
 
     constructor(corredores: Player[]){
         this.corredores = corredores
-
-        
     }
 }

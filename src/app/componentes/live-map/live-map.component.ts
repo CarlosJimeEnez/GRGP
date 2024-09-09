@@ -1,8 +1,7 @@
-import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone, Input } from '@angular/core';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone, Input, model, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshBasicMaterial, Mesh, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial } from 'three';
-import { Vehicle, Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
+import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial } from 'three';
+import { Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 import { MapPoints } from './vectors';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Player } from '../../interface/Player';
@@ -11,18 +10,25 @@ import { Carrera } from '../../interface/Carrera';
 @Component({
   selector: 'app-live-map',
   standalone: true,
-  imports: [MatCheckboxModule, CommonModule],
+  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="card">
-      <h4 class="card-title p-4">Live Map</h4>
-      <div class="row">
-        <div class="col-12 d-flex mapContainer align-items-center">
-          <div #mapContainer class="mapThreejs">
+      <h4 class="card-title mt-4 ms-4">Live Map</h4>
+        <div class="row">
+          <div div class="col-12 d-flex mapContainer align-items-center">
+            <div #mapContainer  class="mapThreejs m-3">
+          </div>
         </div>
       </div>
-      </div>
       <div class="card-body">
-        <h1>....</h1>
+        <h1>{{lapCount}}/{{maxLaps}}</h1>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+        <label class="form-check-label" for="flexCheckDefault">
+          Crash example
+        </label>
       </div>
     </div>
   `,
@@ -33,6 +39,7 @@ export class LiveMapComponent implements OnInit {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
   @Input() player1Color: number = 0xf315c3
   @Input() player2Color: number = 0xff914d
+  readonly checked = model(false);
 
   // Primero, crea la geometría del círculo
   radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
@@ -152,7 +159,7 @@ export class LiveMapComponent implements OnInit {
           this.radius, 
           this.widthSegments, 
           this.heightSegments, 
-          1, 
+          1.5, 
           this.path2
         )
 
@@ -166,7 +173,7 @@ export class LiveMapComponent implements OnInit {
       this.zone.runOutsideAngular(() => {
         this.renderer.setAnimationLoop(() => this.animate());      
       })
-      }
+    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -194,15 +201,21 @@ export class LiveMapComponent implements OnInit {
   // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
+    let leaderLaps: number = 0 ; 
+    
+    // Usamos reduce para encontrar el jugador con más vueltas
+  const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
+    if(player.lapCount < this.maxLaps) {
+      player.checkLapCount()
+      player.entityManager.update(delta)
+    } 
+    return (player.lapCount > maxPlayer.lapCount) ? player : maxPlayer;  
+  }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
 
-    // Stop the app if lapCount > maxLaps
-    for(let player of this.carrera.corredores){
-      if(player.lapCount < this.maxLaps){
-        player.checkLapCount()
-        player.entityManager.update(delta)
-      }
-    }
-     
+  this.zone.run(() => {        
+      this.lapCount = maxLapsPlayer.lapCount;
+  })
+
     // this.stopAnimation()
     this.controls.update();
     this.renderer.render(this.scene, this.camera);

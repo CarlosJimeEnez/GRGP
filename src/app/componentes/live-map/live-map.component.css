@@ -24,7 +24,7 @@ h1 {
 .card-body {
     position: absolute; /* Posiciona el texto sobre la imagen */
     top: var(--m1); /* Ajusta la posición desde la parte superior */
-    left: var(--m3); /* Ajusta la posición desde la parte izquierda */
+    left: var(--m1); /* Ajusta la posición desde la parte izquierda */
     color: #000; /* Color del texto */
     font-size: 2rem; /* Tamaño de la fuente */
     font-weight: bold; /* Hace el texto en negrita */
