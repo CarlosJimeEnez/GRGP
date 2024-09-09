@@ -2,6 +2,7 @@ import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshBasicMater
 import { Vehicle, Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 
 export class Player {
+    inAccidente: boolean = false; 
     lapCount: number; 
     hasCompletedLap: boolean; 
     currentWaypoint: Vector3; 

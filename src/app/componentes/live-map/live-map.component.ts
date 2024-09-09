@@ -7,6 +7,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Player } from '../../interface/Player';
 import { Carrera } from '../../interface/Carrera';
 import { MatIcon } from '@angular/material/icon';
+import { AlertsService } from '../../services/alerts.service';
 
 @Component({
   selector: 'app-live-map',
@@ -19,7 +20,6 @@ import { MatIcon } from '@angular/material/icon';
         <div class="row">
           <div div class="col-12 d-flex mapContainer align-items-center">
             <div #mapContainer  class="mapThreejs m-3"></div>
-            
         </div>
       </div>
       <div class="card-body">
@@ -91,7 +91,7 @@ export class LiveMapComponent implements OnInit {
   onPathBehavior!: OnPathBehavior;
   entityManager!: EntityManager;
   
-  constructor(private zone: NgZone, private cdr: ChangeDetectorRef){}
+  constructor(private zone: NgZone, private cdr: ChangeDetectorRef, private alertService: AlertsService){}
 
   ngOnInit(): void {
     this.scene = new Scene();
@@ -220,10 +220,10 @@ export class LiveMapComponent implements OnInit {
     
     // Usamos reduce para encontrar el jugador con más vueltas
   const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
-    if(player.lapCount < this.maxLaps) {
+    if(player.lapCount < this.maxLaps && !player.inAccidente) {
       player.checkLapCount()
       player.entityManager.update(delta)
-    } 
+    }
     return (player.lapCount > maxPlayer.lapCount) ? player : maxPlayer;  
   }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
 
@@ -238,6 +238,8 @@ export class LiveMapComponent implements OnInit {
   }
 
   crashDetectionFnc(state: boolean): void{
+    this.player2.inAccidente = state
     this.crashDetection = state
+    this.alertService.setCrashDetection(this.crashDetection)
   }
 }

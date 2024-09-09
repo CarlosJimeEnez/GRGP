@@ -61,3 +61,8 @@
 .zoneOfControl {
     background-color: var(--background-v2);
 }
+
+.overflow-container {
+    max-height: 50vh; /* Ajusta según tus necesidades */
+    overflow: auto;
+}
