@@ -240,7 +240,6 @@ export class LiveMapComponent implements OnInit {
 
   this.zone.run(() => {        
     this.lapCount = maxLapsPlayer.lapCount;
-   
     this.cdr.detectChanges(); // Forzar la detección de cambios
   })
 

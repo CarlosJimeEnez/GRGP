@@ -31,7 +31,7 @@ import { AlertsService } from '../../services/alerts.service';
         <!-- Fastes Lap -->
         <div class="row align-items-center text-center">
             <div class="col text-start">
-                <p>Fastest Lap: </p>
+                <p>Total time: </p>
             </div>
             <div class="col text-end">
                 <p>{{time}}</p>
