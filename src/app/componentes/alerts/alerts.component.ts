@@ -17,7 +17,7 @@ import { AlertsService } from '../../services/alerts.service';
         </div>
       </div>
       @for (alert of _alerts; track alert.id) {
-        <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
         <mat-icon>flag</mat-icon>  
         <div>
             Crash Detection

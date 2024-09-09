@@ -68,6 +68,7 @@ export class LiveMapComponent implements OnInit {
   maxLaps: number = 2; 
   lastLapTime: number = 0; 
   lapCooldown: number = 2000; //Cooldown en milisegundos (2)   
+  startTime: number = 0 
 
   scaleFactor: number = 0.03;
   offseX: number = 0;
@@ -91,9 +92,14 @@ export class LiveMapComponent implements OnInit {
   onPathBehavior!: OnPathBehavior;
   entityManager!: EntityManager;
   
-  constructor(private zone: NgZone, private cdr: ChangeDetectorRef, private alertService: AlertsService){}
+  constructor(
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef,
+    private alertService: AlertsService
+  ){}
 
   ngOnInit(): void {
+    this.startTime = Date.now(); 
     this.scene = new Scene();
     this.time = new Time(); 
     this.path = new Path();
@@ -112,6 +118,8 @@ export class LiveMapComponent implements OnInit {
       this.path2.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
     })
     this.path2.loop = true;
+
+    
   }
 
 
@@ -223,12 +231,16 @@ export class LiveMapComponent implements OnInit {
     if(player.lapCount < this.maxLaps && !player.inAccidente) {
       player.checkLapCount()
       player.entityManager.update(delta)
+      let endTime = Date.now()
+      let elapsedTime = (endTime - this.startTime) / 1000
+      this.alertService.setTimeDetection(elapsedTime)
     }
     return (player.lapCount > maxPlayer.lapCount) ? player : maxPlayer;  
   }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
 
   this.zone.run(() => {        
     this.lapCount = maxLapsPlayer.lapCount;
+   
     this.cdr.detectChanges(); // Forzar la detección de cambios
   })
 

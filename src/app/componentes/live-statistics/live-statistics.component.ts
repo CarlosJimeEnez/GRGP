@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AlertsService } from '../../services/alerts.service';
 
 @Component({
   selector: 'app-live-statistics',
@@ -15,7 +16,7 @@ import { Component } from '@angular/core';
             </div>
             <div class="col text-end">
                 <!-- <p>22/44</p> -->
-                 <p>...</p>
+                 <p>2</p>
             </div>
         </div>
         <!-- Current Leader -->
@@ -33,7 +34,7 @@ import { Component } from '@angular/core';
                 <p>Fastest Lap: </p>
             </div>
             <div class="col text-end">
-                <p>...</p>
+                <p>{{time}}</p>
             </div>
         </div>
     </div>
@@ -41,6 +42,13 @@ import { Component } from '@angular/core';
   `,
   styleUrl: './live-statistics.component.css'
 })
-export class LiveStatisticsComponent {
+export class LiveStatisticsComponent implements OnInit {
+    time: number = 0 
+    constructor(private alertService: AlertsService){}
 
+    ngOnInit(): void {
+        this.alertService.timeDetection$.subscribe((val) => {
+            this.time = val
+        })
+    }
 }
