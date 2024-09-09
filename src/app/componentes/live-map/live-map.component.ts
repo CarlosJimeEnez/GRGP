@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone, Input, model, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone, Input, model, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial } from 'three';
 import { Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
@@ -6,29 +6,45 @@ import { MapPoints } from './vectors';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Player } from '../../interface/Player';
 import { Carrera } from '../../interface/Carrera';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-live-map',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="card">
       <h4 class="card-title mt-4 ms-4">Live Map</h4>
         <div class="row">
           <div div class="col-12 d-flex mapContainer align-items-center">
-            <div #mapContainer  class="mapThreejs m-3">
-          </div>
+            <div #mapContainer  class="mapThreejs m-3"></div>
+            
         </div>
       </div>
       <div class="card-body">
         <h1>{{lapCount}}/{{maxLaps}}</h1>
       </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-        <label class="form-check-label" for="flexCheckDefault">
-          Crash example
-        </label>
+      @if(crashDetection){
+        <div class="card-body-alert">
+          <h5 class="card-title ">Crash Detection</h5>
+          <div>
+            <div class="text-center">
+              <mat-icon class="crashed-player">circle</mat-icon>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12 d-flex justify-content-center">
+            <a class="btn btn-danger" (click)="crashDetectionFnc(false)">
+              <mat-icon class="icons-size">close</mat-icon>
+            </a>  
+            </div>
+          </div>
+        </div>
+      }
+                    
+      <div class="form-check m-3">
+      <a class="btn btn-danger" (click)="crashDetectionFnc(true)">Crash example</a>  
       </div>
     </div>
   `,
@@ -39,8 +55,7 @@ export class LiveMapComponent implements OnInit {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
   @Input() player1Color: number = 0xf315c3
   @Input() player2Color: number = 0xff914d
-  readonly checked = model(false);
-
+  crashDetection: boolean = false
   // Primero, crea la geometría del círculo
   radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
   widthSegments: number = 12; // Segmentos horizontales
@@ -76,7 +91,7 @@ export class LiveMapComponent implements OnInit {
   onPathBehavior!: OnPathBehavior;
   entityManager!: EntityManager;
   
-  constructor(private zone: NgZone){}
+  constructor(private zone: NgZone, private cdr: ChangeDetectorRef){}
 
   ngOnInit(): void {
     this.scene = new Scene();
@@ -201,7 +216,7 @@ export class LiveMapComponent implements OnInit {
   // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
-    let leaderLaps: number = 0 ; 
+    
     
     // Usamos reduce para encontrar el jugador con más vueltas
   const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
@@ -213,11 +228,16 @@ export class LiveMapComponent implements OnInit {
   }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
 
   this.zone.run(() => {        
-      this.lapCount = maxLapsPlayer.lapCount;
+    this.lapCount = maxLapsPlayer.lapCount;
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   })
 
     // this.stopAnimation()
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
+  }
+
+  crashDetectionFnc(state: boolean): void{
+    this.crashDetection = state
   }
 }

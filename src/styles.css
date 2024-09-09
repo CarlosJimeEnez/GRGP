@@ -16,7 +16,7 @@ html, body {
     --shadows-v2: #ffffff; 
     --white: #FFFFFF; 
     --danger: rgba(165, 7, 7, 0.877); 
-
+    --danger-v2: rgba(219, 11, 11, 0.603);
     --m1: 0.25rem;
     --m2: 0.5rem; 
     --m3: 1rem; 
@@ -50,3 +50,4 @@ h5 {font-size: 1.333rem;}
 .btn-primary{
     background-color: var(--primary);
 }
+
