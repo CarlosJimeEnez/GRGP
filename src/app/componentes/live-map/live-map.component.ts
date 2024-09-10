@@ -385,11 +385,6 @@ export class LiveMapComponent implements OnInit {
 
     let allCarsPassedFirstSector: boolean = true
 
-  //   const passed = this.players[0].checkFirstSector(this.sectors[1])
-  //   this.players[0].entityManager.update(delta)
-  //   if (!passed) {
-  //     allCarsPassedFirstSector = false;
-  // }
     // Usamos reduce para encontrar el jugador con más vueltas
     const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
       if(player.lapCount < this.maxLaps && !player.inAccidente) {
@@ -414,11 +409,13 @@ export class LiveMapComponent implements OnInit {
      // Si todos los coches han pasado por el primer sector, podemos tomar alguna acción
     if (allCarsPassedFirstSector) {
       console.log("Todos los coches han pasado por el primer sector.");
-      // Toma las acciones necesarias, como iniciar un temporizador, actualizar el estado, etc.
+      const lineMaterial = new LineBasicMaterial({color: 0x1e9924});
+      const lines = new LineLoop(this.lineGeometry, lineMaterial);
+      this.scene.add(lines);
     }
 
     this.zone.run(() => {        
-      // this.lapCount = maxLapsPlayer.lapCount;
+      this.lapCount = maxLapsPlayer.lapCount;
       this.cdr.detectChanges(); // Forzar la detección de cambios
     })
 
