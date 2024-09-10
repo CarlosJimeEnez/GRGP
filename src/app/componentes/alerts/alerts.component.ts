@@ -20,7 +20,7 @@ import { AlertsService } from '../../services/alerts.service';
         <div class="alert  d-flex align-items-center" role="alert">
         <mat-icon>flag</mat-icon>  
         <div>
-            Crash Detection
+            
           </div>
         </div>
       }

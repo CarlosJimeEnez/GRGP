@@ -52,22 +52,14 @@ h1 {
 }
 
 .card-body-alert {
-    padding: 10%; /* Añade algo de espacio alrededor del texto */
-    position: absolute; /* Posiciona el texto sobre la imagen */
-    background-color: var(--danger-v2);
+    padding: 5%; /* Añade algo de espacio alrededor del texto */
+    background-color: var(--green-flag);
     color: white;
-    top: 26%; /* Ajusta la posición desde la parte superior */
-    left: 26%; /* Ajusta la posición desde la parte izquierda */
     border-radius: 5px;
+    width: 50%;
 }
 
 .icons-size {
     width: 25px;
     height: 20px;
-}
-
-.flag-yellow {
-    color: #c5ae2d;
-    color: #1e9924;
-    
 }

@@ -28,27 +28,6 @@ import { Sectors } from '../../interface/Sectors';
       <div class="card-body">
         <h1>{{lapCount}}/{{maxLaps}}</h1>
       </div>
-      @if(crashDetection){
-        <div class="card-body-alert">
-          <h5 class="card-title ">Crash Detection</h5>
-          <div>
-            <div class="text-center">
-              <mat-icon class="crashed-player">circle</mat-icon>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-12 d-flex justify-content-center">
-            <a class="btn btn-danger" (click)="crashDetectionFnc(false)">
-              <mat-icon class="icons-size">close</mat-icon>
-            </a>  
-            </div>
-          </div>
-        </div>
-      }
-                    
-      <div class="form-check m-3">
-      <a class="btn btn-danger" (click)="crashDetectionFnc(true)">Crash example</a>  
-      </div>
     </div>
   `,
   styleUrl: './live-map.component.css'
@@ -59,12 +38,14 @@ export class LiveMapComponent implements OnInit {
   @Input() player1Color: number = 0xf315c3
   @Input() player2Color: number = 0xff914d
 
+  allCarsPassedFirstSector: boolean = false
   crashDetection: boolean = false
   // Primero, crea la geometría del círculo
   radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
   radiusSectorsSphere: number = 0.15
   widthSegments: number = 12; // Segmentos horizontales
   heightSegments: number = 12; // Segmentos verticales
+  hasSentCrashDetection:boolean = false;
 
   hasCompletedLap: boolean = false;
   initialWaypoint!: Vector3;
@@ -118,7 +99,6 @@ export class LiveMapComponent implements OnInit {
   player1!: Player
   player2!: Player 
   
-
   carrera!: Carrera
 
   followPathBehavior!: FollowPathBehavior;
@@ -369,8 +349,6 @@ export class LiveMapComponent implements OnInit {
     const delta = this.time.update().getDelta();
     this.labelRenderer.render(this.scene, this.camera);
 
-
-
     // Render Sectors
     const position: any = [];
     this.sectors.forEach((element:any) => {
@@ -383,7 +361,7 @@ export class LiveMapComponent implements OnInit {
     const lines = new LineLoop(this.lineGeometry, lineMaterial);
     this.scene.add(lines);
 
-    let allCarsPassedFirstSector: boolean = true
+    this.allCarsPassedFirstSector = true
 
     // Usamos reduce para encontrar el jugador con más vueltas
     const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
@@ -394,7 +372,7 @@ export class LiveMapComponent implements OnInit {
         if(!player.passedFirstSector) {
           const passed = player.checkFirstSector(this.sectors[1])
           if(!passed){
-            allCarsPassedFirstSector = false
+            this.allCarsPassedFirstSector = false
           }
         }
 
@@ -407,11 +385,17 @@ export class LiveMapComponent implements OnInit {
     }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
 
      // Si todos los coches han pasado por el primer sector, podemos tomar alguna acción
-    if (allCarsPassedFirstSector) {
+    if (this.allCarsPassedFirstSector) {
       console.log("Todos los coches han pasado por el primer sector.");
       const lineMaterial = new LineBasicMaterial({color: 0x1e9924});
       const lines = new LineLoop(this.lineGeometry, lineMaterial);
       this.scene.add(lines);
+    }
+
+    //Envio de alerta
+    if (this.allCarsPassedFirstSector && !this.hasSentCrashDetection) {
+      this.alertService.setCrashDetection(this.allCarsPassedFirstSector)
+      this.hasSentCrashDetection = true
     }
 
     this.zone.run(() => {        
@@ -423,11 +407,6 @@ export class LiveMapComponent implements OnInit {
     this.renderer.render(this.scene, this.camera);
   }
 
-  crashDetectionFnc(state: boolean): void{
-    this.player2.inAccidente = state
-    this.crashDetection = state
-    this.alertService.setCrashDetection(this.crashDetection)
-  }
 
   newPlayers(velocity: number[], paths: Path[], colors: number[]): void{
    let playerDtoArray: PlayerDto[] = []
