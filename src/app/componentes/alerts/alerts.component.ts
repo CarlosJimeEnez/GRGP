@@ -11,11 +11,15 @@ import { AlertsService } from '../../services/alerts.service';
   <div class="card">
     <h5 class="card-title p-3"> Alerts </h5>
     <div class="container">
-      <div class="row align-items-center m-1">
-        <div class="alert alert-info d-flex align-items-center" role="alert">
-          The race began
-        </div>
+    
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+      <div class="">
+
       </div>
+      <mat-icon>flag</mat-icon>
+      <h6>A simple warning alert—check it out</h6>
+    </div>
+
       @for (alert of _alerts; track alert.id) {
         <div class="alert  d-flex align-items-center" role="alert">
         <mat-icon>flag</mat-icon>  

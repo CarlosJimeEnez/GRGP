@@ -251,7 +251,6 @@ export class LiveMapComponent implements OnInit {
       MapPoints.forEach((waypoint: any) => {
         position.push(waypoint[0] * this.scaleFactor, 0, waypoint[1] * this.scaleFactor) 
       })
-      console.log(this.sectors)
 
       this.lineGeometry = new BufferGeometry();
       this.lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
@@ -279,7 +278,6 @@ export class LiveMapComponent implements OnInit {
       this.camera.aspect = this.width / this.height;
       this.renderer.setSize(this.width, this.height);
       this.camera.updateProjectionMatrix();
-      console.log(this.width, this.height);
     }
   }
 
@@ -386,7 +384,6 @@ export class LiveMapComponent implements OnInit {
 
      // Si todos los coches han pasado por el primer sector, podemos tomar alguna acción
     if (this.allCarsPassedFirstSector) {
-      console.log("Todos los coches han pasado por el primer sector.");
       const lineMaterial = new LineBasicMaterial({color: 0x1e9924});
       const lines = new LineLoop(this.lineGeometry, lineMaterial);
       this.scene.add(lines);
