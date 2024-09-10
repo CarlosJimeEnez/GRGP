@@ -36,6 +36,9 @@ export class Player {
     lastLapTime: number = 0; 
     lapCooldown: number = 2000; //Cooldown en milisegundos (2)   
 
+    sector!: any 
+    passedFirstSector: boolean = false
+
     constructor(initialWaypoint: Vector3 ,playerColor: number, radius: number, widthSegments: number, heightSegments: number, maxSpeed: number, path: Path) {
         this.lapCount = 0;
         this.hasCompletedLap = false;
@@ -45,7 +48,7 @@ export class Player {
         this.heightSegments = heightSegments;
         this.maxSpeed = maxSpeed;
         this.currentWaypoint = new Vector3()
-
+        this.sector = 1
         // Crear la geometría y el material del vehículo
         this.vehicleGeometry = new SphereGeometry(this.radius, this.widthSegments, this.heightSegments);
         this.vehicleMaterial = new MeshBasicMaterial({ color: playerColor });
@@ -96,5 +99,22 @@ export class Player {
             console.log("Se dio una vuelta");
             this.lastLapTime = currentTime; 
         } 
+    }
+
+    checkFirstSector(firstSector: any[]): boolean {
+        // Verifica si el jugador ha pasado por el primer sector
+        const sectorStart = firstSector[0];
+        const sectorEnd = firstSector[firstSector.length - 1];
+
+        const currentPosition = this.vehicleAgent.getWorldPosition(this.currentWaypoint);
+        const distanceToStart = currentPosition.distanceTo(new Vector3(sectorStart[0] * 0.03, 0, sectorStart[1] * 0.03));
+        const distanceToEnd = currentPosition.distanceTo(new Vector3(sectorEnd[0] * 0.03, 0, sectorEnd[1] * 0.03));
+        // Si el jugador está dentro de los límites del primer sector, marcamos como pasado
+        const sectorThreshold = 0.5;  // Ajusta según el tamaño de tu sector
+        if (distanceToStart < sectorThreshold && distanceToEnd > sectorThreshold) {
+            this.passedFirstSector = true;
+            return true;
+        }
+        return false;
     }
 }

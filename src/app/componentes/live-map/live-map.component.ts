@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone, Input, model, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial, SphereGeometry, MeshBasicMaterial, Mesh, Group } from 'three';
+import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial, SphereGeometry, MeshBasicMaterial, Mesh, Group, Line } from 'three';
 import { Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 import { MapPoints } from './vectors';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
@@ -86,7 +86,7 @@ export class LiveMapComponent implements OnInit {
   width!: number;
   height!: number;
   renderer!: any;  
-  
+  lineGeometry!: BufferGeometry;
   colors: number[] = [
     0xFF5733,
     0x33FF57, // Verde lima
@@ -112,7 +112,8 @@ export class LiveMapComponent implements OnInit {
   path10!: Path;
   paths: Path[] = []
   controls!: OrbitControls;
-  
+  sectors!: any 
+
   players: Player[] = []  
   player1!: Player
   player2!: Player 
@@ -216,16 +217,28 @@ export class LiveMapComponent implements OnInit {
       this.labelRenderer.domElement.style.pointerEvents = "none"
       this.mapContainer.nativeElement.appendChild(this.labelRenderer.domElement)
       
-      const sectors = this.calculoSectores()
+      // const sectors = this.calculoSectores()
+      const numeroDeSectores = 24;  // Número de sectores que deseas
+      this.sectors = this.dividirEnSectores(MapPoints, numeroDeSectores);
       const group = new Group();
-      sectors.forEach((sector, index) => {
-        const x = sector[0][0]
-        const y = sector[0][1]
-        const sphereMesh1 = this.createCpointMesh(`sphereMesh${index}`, x * this.scaleFactor,0,y * this.scaleFactor)
-        group.add(sphereMesh1);
-      })
+      const group3dText = new Group();
 
+      this.sectors.forEach((element: any, index:any) => {
+        const x = element[0][0]
+        const y = element[0][1]
+        const sphereMesh1 = this.createCpointMesh(`sphereMesh${index}`, x * this.scaleFactor,0,y * this.scaleFactor)
+        group.add(sphereMesh1)
+
+        // Crear un CSS2DObject y añadirlo a la escena
+        const div = document.createElement('p');
+        div.textContent = `Sec: ${index + 1}`;
+        div.style.color = 'black'; // Ajusta el color según sea necesario
+        const divLabel = new CSS2DObject(div);
+        divLabel.position.set(x * this.scaleFactor, -5, y * this.scaleFactor);
+        group3dText.add(divLabel);
+      })
       this.scene.add(group)
+      this.scene.add(group3dText)
 
       // Solo se ejecuta en el navegador
       this.renderer = new WebGLRenderer({ antialias: true });
@@ -252,23 +265,25 @@ export class LiveMapComponent implements OnInit {
       this.controls.target.set(gimbalPositionX, 0, gimbalPositionY)
       this.controls.update();
       
+
       // Waypoints to render
       const position: any = [];
       MapPoints.forEach((waypoint: any) => {
         position.push(waypoint[0] * this.scaleFactor, 0, waypoint[1] * this.scaleFactor) 
       })
-      const lineGeometry = new BufferGeometry();
-      lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
-      const lineMaterial = new LineBasicMaterial({color: 0x000000});
-      const lines = new LineLoop(lineGeometry, lineMaterial);
+      console.log(this.sectors)
 
-     
-      this.newPlayers([1, 1.1, 1.2, 1.3, 1.4, 1.8, 1.9, 2.1, 2.2, 2.3], this.paths, this.colors)
+      this.lineGeometry = new BufferGeometry();
+      this.lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
+      const lineMaterial = new LineBasicMaterial({color: 0x000000});
+      const lines = new LineLoop(this.lineGeometry, lineMaterial);
+      this.scene.add(lines);
+
+      this.newPlayers([2.3, 2.2, 2.1, 1.9, 1.8, 1.4, 1.3, 1.2, 1.1, 1], this.paths, this.colors)
       this.carrera = new Carrera(this.players) 
       this.players.forEach(element => {
         this.scene.add(element.vehicleMesh)
       });
-      this.scene.add(lines);
 
       // this.renderer.setAnimationLoop(this.animate())
       this.zone.runOutsideAngular(() => {
@@ -288,15 +303,47 @@ export class LiveMapComponent implements OnInit {
     }
   }
 
-  private calculoSectores(){
-    const sectors = [];
-    const sectorSize = Math.ceil(MapPoints.length / 24);
+  private calcularDistancia(p1:any, p2:any) {
+    return Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
+  }
 
-    for (let i = 0; i < MapPoints.length; i += sectorSize) {
-        sectors.push(MapPoints.slice(i, i + sectorSize));
+  private dividirEnSectores(MapPoints: any, numeroDeSectores:any, margen = 1) {
+    let sectores = [];
+    let sectorActual = [];
+    let distanciaTotal = 0;
+    
+    // Calcular la distancia total de la línea
+    for (let i = 0; i < MapPoints.length - 1; i++) {
+        distanciaTotal += this.calcularDistancia(MapPoints[i], MapPoints[i + 1]);
     }
 
-    return sectors
+    // Distancia objetivo por sector
+    const distanciaObjetivo = distanciaTotal / numeroDeSectores;
+    let distanciaAcumulada = 0;
+
+    for (let i = 0; i < MapPoints.length - 1; i++) {
+        if (sectorActual.length === 0) {
+            sectorActual.push(MapPoints[i]);  // Asegurar al menos un punto en el sector
+        }
+        
+        let distanciaProximoPunto = this.calcularDistancia(MapPoints[i], MapPoints[i + 1]);
+        // Comprobar si agregar el próximo punto excede el margen permitido
+        if (distanciaAcumulada + distanciaProximoPunto > distanciaObjetivo * (1 + margen) && sectorActual.length > 0) {
+            sectores.push(sectorActual);
+            sectorActual = [];
+            distanciaAcumulada = 0;
+        } else {
+            distanciaAcumulada += distanciaProximoPunto;
+            sectorActual.push(MapPoints[i + 1]);
+        }
+    }
+  
+    // Agregar el último sector
+    if (sectorActual.length > 0) {
+        sectores.push(sectorActual);
+    }
+
+    return sectores;
   }
 
   private sync(entity: any, renderComponent: any){
@@ -312,7 +359,6 @@ export class LiveMapComponent implements OnInit {
     return mesh
   }
 
-
   private updateDimensions(): void {
     this.width = this.mapContainer.nativeElement.clientWidth;
     this.height = this.mapContainer.nativeElement.clientHeight;
@@ -323,11 +369,39 @@ export class LiveMapComponent implements OnInit {
     const delta = this.time.update().getDelta();
     this.labelRenderer.render(this.scene, this.camera);
 
+
+
+    // Render Sectors
+    const position: any = [];
+    this.sectors.forEach((element:any) => {
+      element.forEach((elemenInSector:any) => {
+        position.push(elemenInSector[0] * this.scaleFactor, 0, elemenInSector[1] * this.scaleFactor) 
+      });
+    });
+    this.lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
+    const lineMaterial = new LineBasicMaterial({color: 0xc0aa2e});
+    const lines = new LineLoop(this.lineGeometry, lineMaterial);
+    this.scene.add(lines);
+
+    let allCarsPassedFirstSector: boolean = true
+
+  //   const passed = this.players[0].checkFirstSector(this.sectors[1])
+  //   this.players[0].entityManager.update(delta)
+  //   if (!passed) {
+  //     allCarsPassedFirstSector = false;
+  // }
     // Usamos reduce para encontrar el jugador con más vueltas
     const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
       if(player.lapCount < this.maxLaps && !player.inAccidente) {
         player.checkLapCount()
         player.entityManager.update(delta)
+
+        if(!player.passedFirstSector) {
+          const passed = player.checkFirstSector(this.sectors[1])
+          if(!passed){
+            allCarsPassedFirstSector = false
+          }
+        }
 
         //Medicion del tiempo
         let endTime = Date.now()
@@ -337,8 +411,14 @@ export class LiveMapComponent implements OnInit {
       return (player.lapCount > maxPlayer.lapCount) ? player : maxPlayer;  
     }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
 
+     // Si todos los coches han pasado por el primer sector, podemos tomar alguna acción
+    if (allCarsPassedFirstSector) {
+      console.log("Todos los coches han pasado por el primer sector.");
+      // Toma las acciones necesarias, como iniciar un temporizador, actualizar el estado, etc.
+    }
+
     this.zone.run(() => {        
-      this.lapCount = maxLapsPlayer.lapCount;
+      // this.lapCount = maxLapsPlayer.lapCount;
       this.cdr.detectChanges(); // Forzar la detección de cambios
     })
 
@@ -391,7 +471,7 @@ export class LiveMapComponent implements OnInit {
       )
       
     const playerDto = new PlayerDto(
-      i,
+      i +1,
       nombres[i],
       colorsHex[i]
     )
