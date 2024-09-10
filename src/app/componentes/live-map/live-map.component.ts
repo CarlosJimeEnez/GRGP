@@ -4,10 +4,11 @@ import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Floa
 import { Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 import { MapPoints } from './vectors';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Player } from '../../interface/Player';
+import { Player, PlayerDto } from '../../interface/Player';
 import { Carrera } from '../../interface/Carrera';
 import { MatIcon } from '@angular/material/icon';
 import { AlertsService } from '../../services/alerts.service';
+import { Sectors } from '../../interface/Sectors';
 
 @Component({
   selector: 'app-live-map',
@@ -55,6 +56,7 @@ export class LiveMapComponent implements OnInit {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
   @Input() player1Color: number = 0xf315c3
   @Input() player2Color: number = 0xff914d
+
   crashDetection: boolean = false
   // Primero, crea la geometría del círculo
   radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
@@ -69,7 +71,7 @@ export class LiveMapComponent implements OnInit {
   lastLapTime: number = 0; 
   lapCooldown: number = 2000; //Cooldown en milisegundos (2)   
   startTime: number = 0 
-
+  
   scaleFactor: number = 0.03;
   offseX: number = 0;
 
@@ -80,12 +82,39 @@ export class LiveMapComponent implements OnInit {
   width!: number;
   height!: number;
   renderer!: any;  
+  
+  colors: number[] = [
+    0xFF5733,
+    0x33FF57, // Verde lima
+    0x3357FF, // Azul
+    0xF1C40F, // Amarillo
+    0x8E44AD, // Púrpura
+    0xE74C3C, // Rojo
+    0x3498DB, // Azul claro
+    0x1ABC9C, // Turquesa
+    0x2ECC71, // Verde
+    0xF39C12  // Naranja
+  ]
+
+  sectors!: any
   path!: Path;
   path2!: Path;  
+  path3!: Path;
+  path4!: Path; 
+  path5!: Path;  
+  path6!: Path;  
+  path7!: Path;
+  path8!: Path;
+  path9!: Path;
+  path10!: Path;
+  paths: Path[] = []
   controls!: OrbitControls;
-
+  
+  players: Player[] = []  
   player1!: Player
   player2!: Player 
+  
+
   carrera!: Carrera
 
   followPathBehavior!: FollowPathBehavior;
@@ -95,19 +124,21 @@ export class LiveMapComponent implements OnInit {
   constructor(
     private zone: NgZone,
     private cdr: ChangeDetectorRef,
-    private alertService: AlertsService
-  ){}
+    private alertService: AlertsService,
+  ){
+
+  }
 
   ngOnInit(): void {
     this.startTime = Date.now(); 
     this.scene = new Scene();
     this.time = new Time(); 
-    this.path = new Path();
-
+    
     this.initialWaypoint = new Vector3();
     this.currentWaypoint = new Vector3();
     
     //New Path
+    this.path = new Path();
     MapPoints.forEach((point: any) => {
       this.path.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
     })
@@ -119,18 +150,68 @@ export class LiveMapComponent implements OnInit {
     })
     this.path2.loop = true;
 
-    
+    this.path3 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path3.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path3.loop = true;
+
+    this.path4 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path4.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path4.loop = true;
+
+    this.path5 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path5.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path5.loop = true;
+
+    this.path6 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path6.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path6.loop = true;
+
+    this.path7 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path7.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path7.loop = true;
+
+    this.path8 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path8.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path8.loop = true;
+
+    this.path9 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path9.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path9.loop = true;
+
+    this.path10 = new Path();
+    MapPoints.forEach((point: any) => {
+      this.path10.add(new Vector3((point[0] * this.scaleFactor) - this.offseX, 0, point[1] * this.scaleFactor))
+    })
+    this.path10.loop = true;
+
+    this.paths = [this.path, this.path2, this.path3, this.path4, this.path5, this.path6, this.path7, this.path8, this.path9, this.path10]
   }
 
 
   ngAfterViewInit(): void {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.updateDimensions();
-      
+    
+
       // Solo se ejecuta en el navegador
       this.renderer = new WebGLRenderer({ antialias: true });
       this.renderer.setSize(this.width, this.height);
       this.mapContainer.nativeElement.appendChild(this.renderer.domElement)
+
       this.renderer.setClearColor(0xffffff)
 
       this.camera = new PerspectiveCamera(75, 1, 0.1, 1000); // Inicializa con un aspect ratio por defecto
@@ -144,8 +225,6 @@ export class LiveMapComponent implements OnInit {
       this.controls.minPolarAngle = 0; // Mínimo ángulo polar
       this.controls.maxPolarAngle = Math.PI / 2.5; // Máximo ángulo polar
     
-      
-  
       //Camera Position
       const gimbalPositionX = MapPoints[MapPoints.length/4][0] * this.scaleFactor
       const gimbalPositionY = MapPoints[MapPoints.length/4][1] * this.scaleFactor
@@ -160,36 +239,17 @@ export class LiveMapComponent implements OnInit {
       })
       const lineGeometry = new BufferGeometry();
       lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
-
       const lineMaterial = new LineBasicMaterial({color: 0x000000});
       const lines = new LineLoop(lineGeometry, lineMaterial);
 
-      this.player1 = new Player
-        (
-          this.initialWaypoint, 
-          this.player1Color, 
-          this.radius, 
-          this.widthSegments, 
-          this.heightSegments, 
-          2, 
-          this.path
-        )
-        
-      this.player2 = new Player
-        (
-          this.initialWaypoint, 
-          this.player2Color, 
-          this.radius, 
-          this.widthSegments, 
-          this.heightSegments, 
-          1.5, 
-          this.path2
-        )
+      this.sectors = MapPoints.slice(0,10)
+      console.log(this.sectors)
 
-      this.carrera = new Carrera([this.player1, this.player2]) 
-
-      this.scene.add(this.player1.vehicleMesh);
-      this.scene.add(this.player2.vehicleMesh)
+      this.newPlayers([1,1.3,1.3,1.8,1.4,2,1.5,2,2.1,2], this.paths, this.colors)
+      this.carrera = new Carrera(this.players) 
+      this.players.forEach(element => {
+        this.scene.add(element.vehicleMesh)
+      });
       this.scene.add(lines);
 
       // this.renderer.setAnimationLoop(this.animate())
@@ -224,13 +284,14 @@ export class LiveMapComponent implements OnInit {
   // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
-    
-    
+
     // Usamos reduce para encontrar el jugador con más vueltas
   const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
     if(player.lapCount < this.maxLaps && !player.inAccidente) {
       player.checkLapCount()
       player.entityManager.update(delta)
+
+      //Medicion del tiempo
       let endTime = Date.now()
       let elapsedTime = (endTime - this.startTime) / 1000
       this.alertService.setTimeDetection(elapsedTime)
@@ -243,7 +304,6 @@ export class LiveMapComponent implements OnInit {
     this.cdr.detectChanges(); // Forzar la detección de cambios
   })
 
-    // this.stopAnimation()
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
@@ -253,4 +313,64 @@ export class LiveMapComponent implements OnInit {
     this.crashDetection = state
     this.alertService.setCrashDetection(this.crashDetection)
   }
+
+  newPlayers(velocity: number[], paths: Path[], colors: number[]): void{
+   let playerDtoArray: PlayerDto[] = []
+   
+    const nombres: string[] = [
+      "Juan",
+      "María",
+      "Carlos",
+      "Ana",
+      "Luis",
+      "Elena",
+      "Miguel",
+      "Sofía",
+      "Pedro",
+      "Lucía"
+  ];
+  const colorsHex: string[] = [
+    "#FF5733", // Rojo anaranjado
+    "#33FF57", // Verde lima
+    "#3357FF", // Azul
+    "#F1C40F", // Amarillo
+    "#8E44AD", // Púrpura
+    "#E74C3C", // Rojo
+    "#3498DB", // Azul claro
+    "#1ABC9C", // Turquesa
+    "#2ECC71", // Verde
+    "#F39C12"  // Naranja
+  ]
+  for(let i = 0; i < 10; i++){
+    const player = new Player
+      (
+        this.initialWaypoint, 
+        colors[i], 
+        this.radius, 
+        this.widthSegments, 
+        this.heightSegments, 
+        velocity[i], 
+        this.paths[i]
+      )
+      
+    const playerDto = new PlayerDto(
+      i,
+      nombres[i],
+      colorsHex[i]
+    )
+    playerDtoArray.push(playerDto)
+    // Mapear playerDtoArray al formato deseado
+  const pilotsData: { position: number, name: string, playerColor: string }[] =
+  playerDtoArray.map(player => ({
+    position: player.position,
+    name: player.name,
+    playerColor: player.playerColor
+  }));
+
+
+
+    this.alertService.setDataDetection(pilotsData)
+    this.players.push(player)
+  }
+}
 }

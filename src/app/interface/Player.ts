@@ -1,7 +1,22 @@
 import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshBasicMaterial, Mesh, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial } from 'three';
 import { Vehicle, Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 
+export class PlayerDto{
+    position!: number
+    name!: string
+    playerColor!: string
+
+    constructor(position: number, name: string, playerColor: string){
+        this.position = position, 
+        this.name = name, 
+        this.playerColor = playerColor
+    }
+}
+
 export class Player {
+    position!: number
+    name!: string
+    playerColor!: string
     inAccidente: boolean = false; 
     lapCount: number; 
     hasCompletedLap: boolean; 
