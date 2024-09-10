@@ -1,8 +1,10 @@
 import { Component, ElementRef, ViewChild, HostListener, OnInit, NgZone, Input, model, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial } from 'three';
+import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Float32BufferAttribute, LineBasicMaterial, SphereGeometry, MeshBasicMaterial, Mesh, Group } from 'three';
 import { Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 import { MapPoints } from './vectors';
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Player, PlayerDto } from '../../interface/Player';
 import { Carrera } from '../../interface/Carrera';
@@ -60,6 +62,7 @@ export class LiveMapComponent implements OnInit {
   crashDetection: boolean = false
   // Primero, crea la geometría del círculo
   radius: number = 0.5; // Radio de la esfera, ajusta según sea necesario
+  radiusSectorsSphere: number = 0.15
   widthSegments: number = 12; // Segmentos horizontales
   heightSegments: number = 12; // Segmentos verticales
 
@@ -75,6 +78,7 @@ export class LiveMapComponent implements OnInit {
   scaleFactor: number = 0.03;
   offseX: number = 0;
 
+  labelRenderer!: CSS2DRenderer
   scene!: Scene;
   staticScene!: Scene
   camera!: PerspectiveCamera;
@@ -96,7 +100,6 @@ export class LiveMapComponent implements OnInit {
     0xF39C12  // Naranja
   ]
 
-  sectors!: any
   path!: Path;
   path2!: Path;  
   path3!: Path;
@@ -136,7 +139,7 @@ export class LiveMapComponent implements OnInit {
     
     this.initialWaypoint = new Vector3();
     this.currentWaypoint = new Vector3();
-    
+
     //New Path
     this.path = new Path();
     MapPoints.forEach((point: any) => {
@@ -206,6 +209,23 @@ export class LiveMapComponent implements OnInit {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.updateDimensions();
     
+      this.labelRenderer = new CSS2DRenderer();
+      this.labelRenderer.setSize(this.width, this.height);
+      this.labelRenderer.domElement.style.position = 'absolute';
+      this.labelRenderer.domElement.style.top = '0px';
+      this.labelRenderer.domElement.style.pointerEvents = "none"
+      this.mapContainer.nativeElement.appendChild(this.labelRenderer.domElement)
+      
+      const sectors = this.calculoSectores()
+      const group = new Group();
+      sectors.forEach((sector, index) => {
+        const x = sector[0][0]
+        const y = sector[0][1]
+        const sphereMesh1 = this.createCpointMesh(`sphereMesh${index}`, x * this.scaleFactor,0,y * this.scaleFactor)
+        group.add(sphereMesh1);
+      })
+
+      this.scene.add(group)
 
       // Solo se ejecuta en el navegador
       this.renderer = new WebGLRenderer({ antialias: true });
@@ -242,10 +262,8 @@ export class LiveMapComponent implements OnInit {
       const lineMaterial = new LineBasicMaterial({color: 0x000000});
       const lines = new LineLoop(lineGeometry, lineMaterial);
 
-      this.sectors = MapPoints.slice(0,10)
-      console.log(this.sectors)
-
-      this.newPlayers([1,1.3,1.3,1.8,1.4,2,1.5,2,2.1,2], this.paths, this.colors)
+     
+      this.newPlayers([1, 1.1, 1.2, 1.3, 1.4, 1.8, 1.9, 2.1, 2.2, 2.3], this.paths, this.colors)
       this.carrera = new Carrera(this.players) 
       this.players.forEach(element => {
         this.scene.add(element.vehicleMesh)
@@ -270,9 +288,28 @@ export class LiveMapComponent implements OnInit {
     }
   }
 
+  private calculoSectores(){
+    const sectors = [];
+    const sectorSize = Math.ceil(MapPoints.length / 24);
+
+    for (let i = 0; i < MapPoints.length; i += sectorSize) {
+        sectors.push(MapPoints.slice(i, i + sectorSize));
+    }
+
+    return sectors
+  }
 
   private sync(entity: any, renderComponent: any){
     renderComponent.matrix.copy(entity.worldMatrix)
+  }
+
+  private createCpointMesh(name: string, x:number, y:number, z:number){
+    const geo = new SphereGeometry(this.radiusSectorsSphere, this.widthSegments, this.heightSegments)
+    const mat = new MeshBasicMaterial({color: 0xFF0000})
+    const mesh = new Mesh(geo, mat)
+    mesh.position.set(x,y,z)
+    mesh.name = name
+    return mesh
   }
 
 
@@ -284,25 +321,26 @@ export class LiveMapComponent implements OnInit {
   // Animate 
   private animate(): void {
     const delta = this.time.update().getDelta();
+    this.labelRenderer.render(this.scene, this.camera);
 
     // Usamos reduce para encontrar el jugador con más vueltas
-  const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
-    if(player.lapCount < this.maxLaps && !player.inAccidente) {
-      player.checkLapCount()
-      player.entityManager.update(delta)
+    const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
+      if(player.lapCount < this.maxLaps && !player.inAccidente) {
+        player.checkLapCount()
+        player.entityManager.update(delta)
 
-      //Medicion del tiempo
-      let endTime = Date.now()
-      let elapsedTime = (endTime - this.startTime) / 1000
-      this.alertService.setTimeDetection(elapsedTime)
-    }
-    return (player.lapCount > maxPlayer.lapCount) ? player : maxPlayer;  
-  }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
+        //Medicion del tiempo
+        let endTime = Date.now()
+        let elapsedTime = (endTime - this.startTime) / 1000
+        this.alertService.setTimeDetection(elapsedTime)
+      }
+      return (player.lapCount > maxPlayer.lapCount) ? player : maxPlayer;  
+    }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
 
-  this.zone.run(() => {        
-    this.lapCount = maxLapsPlayer.lapCount;
-    this.cdr.detectChanges(); // Forzar la detección de cambios
-  })
+    this.zone.run(() => {        
+      this.lapCount = maxLapsPlayer.lapCount;
+      this.cdr.detectChanges(); // Forzar la detección de cambios
+    })
 
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
@@ -342,8 +380,7 @@ export class LiveMapComponent implements OnInit {
     "#F39C12"  // Naranja
   ]
   for(let i = 0; i < 10; i++){
-    const player = new Player
-      (
+    const player = new Player(
         this.initialWaypoint, 
         colors[i], 
         this.radius, 
@@ -359,6 +396,7 @@ export class LiveMapComponent implements OnInit {
       colorsHex[i]
     )
     playerDtoArray.push(playerDto)
+  
     // Mapear playerDtoArray al formato deseado
   const pilotsData: { position: number, name: string, playerColor: string }[] =
   playerDtoArray.map(player => ({
@@ -366,8 +404,6 @@ export class LiveMapComponent implements OnInit {
     name: player.name,
     playerColor: player.playerColor
   }));
-
-
 
     this.alertService.setDataDetection(pilotsData)
     this.players.push(player)
