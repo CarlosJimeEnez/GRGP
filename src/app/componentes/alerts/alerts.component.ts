@@ -2,29 +2,37 @@ import { Component, Input, OnInit } from '@angular/core';
 import {MatBadgeModule} from '@angular/material/badge';
 import { MatIcon } from '@angular/material/icon';
 import { AlertsService } from '../../services/alerts.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-alerts',
   standalone: true,
-  imports: [MatBadgeModule, MatIcon],
+  imports: [MatBadgeModule, MatIcon, CommonModule],
   template: `
   <div class="card">
     <h5 class="card-title p-3"> Alerts </h5>
     <div class="container">
     
-    <div class="alert alert-warning d-flex align-items-center" role="alert">
-      <div class="">
-
+    <div class="alert alert-warning" role="alert">
+      <div class="row align-items-center justify-content-start  alert-row">
+        <div class="col-1">
+          <mat-icon>flag</mat-icon>
+        </div>
+        <div class="col">
+          <h6 class="m-0">Starting</h6>
+        </div>
       </div>
-      <mat-icon>flag</mat-icon>
-      <h6>A simple warning alert—check it out</h6>
     </div>
 
-      @for (alert of _alerts; track alert.id) {
-        <div class="alert  d-flex align-items-center" role="alert">
-        <mat-icon>flag</mat-icon>  
-        <div>
-            
+      @for (alert of alerts; track alert.id) {
+        <div class="alert" [ngClass]="getAlertClass(alert.type)" role="alert">
+          <div class="row align-items-center justify-content-start  alert-row">
+            <div class="col-1">
+              <mat-icon>flag</mat-icon>
+            </div>
+            <div class="col">
+              <h6 class="m-0">{{alert.message}}</h6>
+            </div>
           </div>
         </div>
       }
@@ -36,26 +44,26 @@ import { AlertsService } from '../../services/alerts.service';
 })
 export class AlertsComponent implements OnInit {
   @Input() alertId!: number
-  _alert: any = {
-    id:0,
-    val: false
-  }
-  _alertCounter: number = 0;
-  _alerts: any[] = []
+  alerts: any[] = []
+  alertCounter: number = 0;
+  
   constructor (private alertService: AlertsService){}
 
   ngOnInit(): void {
-   this.alertService.crashDetection$.subscribe(value => {
-    if(value == true){
-      this._alert.val = value
-      this._alert.id = this.getNextAlertId()
-      this._alerts.push({ ...this._alert})
-    }
-    console.log(this._alert)
-   })
+    this.alertService.getAlerts().subscribe(value => {
+      this.alerts = value
+    })
   }
 
-  getNextAlertId(): number {
-    return ++this._alertCounter
+  // Devuelve la clase CSS correspondiente al tipo de alerta
+  getAlertClass(type: string): string {
+    switch (type) {
+      case 'success':
+        return 'alert-success';
+      case 'warning':
+        return 'alert-warning';
+      default:
+        return 'alert-info';
+    }
   }
 }

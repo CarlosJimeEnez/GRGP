@@ -391,7 +391,7 @@ export class LiveMapComponent implements OnInit {
 
     //Envio de alerta
     if (this.allCarsPassedFirstSector && !this.hasSentCrashDetection) {
-      this.alertService.setCrashDetection(this.allCarsPassedFirstSector)
+      this.alertService.addAlert('success', "Pit exit")
       this.hasSentCrashDetection = true
     }
 
