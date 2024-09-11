@@ -105,6 +105,8 @@ export class LiveMapComponent implements OnInit {
   onPathBehavior!: OnPathBehavior;
   entityManager!: EntityManager;
   
+  selectedElement!: PlayerDto; 
+
   constructor(
     private zone: NgZone,
     private cdr: ChangeDetectorRef,
@@ -118,6 +120,11 @@ export class LiveMapComponent implements OnInit {
     this.scene = new Scene();
     this.time = new Time(); 
     
+    this.alertService.currentElement.subscribe(element => {
+      this.selectedElement = element
+      console.log(`elemento recivido: ${element.position}`)
+    })
+
     this.initialWaypoint = new Vector3();
     this.currentWaypoint = new Vector3();
 

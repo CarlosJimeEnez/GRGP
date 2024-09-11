@@ -14,7 +14,9 @@ export class AlertsService {
   private crashDetectionSource = new BehaviorSubject<boolean>(false);
   private timeDetectionSource = new BehaviorSubject<number>(0)
   private tableDataSource = new BehaviorSubject<any>(0)
-
+  private elementSource = new BehaviorSubject<any>(null);  // Emite el valor del elemento
+  
+  currentElement = this.elementSource.asObservable();  // Observable al que los componentes pueden suscribirse
   crashDetection$ = this.crashDetectionSource.asObservable();
   timeDetection$ = this.timeDetectionSource.asObservable(); 
   dataDetection$ = this.tableDataSource.asObservable()
@@ -49,4 +51,9 @@ export class AlertsService {
   setDataDetection(val: any): void {
     this.tableDataSource.next(val)
   }
+
+  changeElement(element: any) {
+    this.elementSource.next(element)
+  }
+  
 }
