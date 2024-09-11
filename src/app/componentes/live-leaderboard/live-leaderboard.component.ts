@@ -36,9 +36,16 @@ import { MatIcon } from '@angular/material/icon';
         
         <!-- Actions Column -->
         <ng-container matColumnDef="demo-actions">
-          <th mat-header-cell *matHeaderCellDef class="actions-column"> Actions </th>
-          <td mat-cell *matCellDef="let element" class="actions-column"> 
-            <mat-icon>flag</mat-icon>
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="row justify-content-start">
+              <div class="col-6">
+                <button type="button" class="btn btn-warning center">
+                  <mat-icon class="yellowFlag m-0">flag</mat-icon>
+                  <p class="mx-2 my-0">example of a collision</p>
+                </button>
+              </div>
+            </div>          
           </td>
         </ng-container>
     

@@ -18,6 +18,8 @@ html, body {
     --danger: rgba(165, 7, 7, 0.877); 
     --danger-v2: rgba(219, 11, 11, 0.603);
     --green-flag: #1e9924;
+    --yellow-flag: #615305;
+    
     --m1: 0.25rem;
     --m2: 0.5rem; 
     --m3: 1rem; 

@@ -44,7 +44,13 @@ width: 100px;
     text-align: center;
 }
 
-.actions-column {
-    text-align: center;
-  }
-  
+.yellowFlag {
+    color: var(--yellow-flag);
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
