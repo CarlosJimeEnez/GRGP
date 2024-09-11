@@ -67,7 +67,7 @@ import { state } from '@angular/animations';
         <div class="">
           <div class="row justify-content-center">
             <div class="col-12 my-1 d-flex justify-content-center">
-              <h1 class="modal-title fs-3 my-2" id="staticBackdropLabel">Yellow Flag</h1>
+              <h1 class="modal-title fs-3 my-2" id="staticBackdropLabel">Yellow Flag {{affectedSector}}</h1>
               <mat-icon class="yellowFlag m-0">flag</mat-icon>
             </div>
           </div>
@@ -111,7 +111,7 @@ export class LiveLeaderboardComponent implements OnInit {
   sectors: Sector[] = [];  // Lista de sectores
   element!: PlayerDto 
   pilotsData: PlayerDto[] = [];
-
+  affectedSector!: any 
   displayedColumns: string[] = ['demo-position', 'demo-name', 'demo-actions'];
   dataSource = this.pilotsData
 
@@ -121,6 +121,9 @@ export class LiveLeaderboardComponent implements OnInit {
   
   ngOnInit(): void {
     this.initializeSectors()
+    this._alertService.affectedSector$.subscribe((sector: number | null) => {
+      this.affectedSector = sector;
+    });
 
     this._alertService.dataDetection$.subscribe(value => {
       const dto: PlayerDto[] = value

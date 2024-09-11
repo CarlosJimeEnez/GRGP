@@ -16,6 +16,12 @@ export class AlertsService {
   private tableDataSource = new BehaviorSubject<any>(0)
   private elementSource = new BehaviorSubject<any>(null);  // Emite el valor del elemento
   private buttonDisabledSubject = new BehaviorSubject<boolean>(true); // Comienza deshabilitado
+  private affectedSectorSubject = new BehaviorSubject<number | null>(null);  // Inicializa el sector como null
+  affectedSector$ = this.affectedSectorSubject.asObservable();  // Observable para que otros componentes puedan suscribirse
+
+  setAffectedSector(sector: number) {
+    this.affectedSectorSubject.next(sector);  // Actualiza el sector afectado
+  }
   buttonDisabled$ = this.buttonDisabledSubject.asObservable();
   currentElement = this.elementSource.asObservable();  // Observable al que los componentes pueden suscribirse
   crashDetection$ = this.crashDetectionSource.asObservable();

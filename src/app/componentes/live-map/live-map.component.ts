@@ -205,6 +205,8 @@ export class LiveMapComponent implements OnInit {
           const player2 = new THREE.Vector3(player1.x, player1.y, player1.z)
 
           const sector = this.findPlayerPositionOnSpline(player2, sectors)
+          this.alertService.setAffectedSector(sector.splineIndex);
+
           // Asegurarse de que no se acceda a un índice negativo
           const startIndex = Math.max(0, sector.splineIndex - 1);
           const endIndex = sector.splineIndex;
