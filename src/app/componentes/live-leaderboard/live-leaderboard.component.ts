@@ -110,7 +110,7 @@ import { state } from '@angular/animations';
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="sector6">
                 <label class="form-check-label" for="sector6">
-                  Sector 6
+                  Sector 5
                 </label>
               </div>
               <!-- Repite para los otros sectores -->
@@ -125,7 +125,7 @@ import { state } from '@angular/animations';
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="sector7">
                 <label class="form-check-label" for="sector7">
-                  Sector 7
+                  Sector 6
                 </label>
               </div>
               <!-- Añadir más sectores... -->
@@ -140,7 +140,7 @@ import { state } from '@angular/animations';
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="sector8">
                 <label class="form-check-label" for="sector8">
-                  Sector 8
+                  Sector 7
                 </label>
               </div>
             </div>
@@ -154,7 +154,7 @@ import { state } from '@angular/animations';
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="sector9">
                 <label class="form-check-label" for="sector9">
-                  Sector 9
+                  Sector 8
                 </label>
               </div>
             </div>
