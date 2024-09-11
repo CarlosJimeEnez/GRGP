@@ -3,11 +3,12 @@ import {MatTableModule} from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { Player, PlayerDto } from '../../interface/Player';
 import { AlertsService } from '../../services/alerts.service';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-live-leaderboard',
   standalone: true,
-  imports: [MatTableModule, CommonModule],
+  imports: [MatTableModule, CommonModule, MatIcon],
   template: `
   <div class="card p-1  bold">
     <h5 class="card-title p-3 pb-0 mb-0 bold">Live Leaderboard</h5>
@@ -33,16 +34,18 @@ import { AlertsService } from '../../services/alerts.service';
             <td mat-cell *matCellDef="let element"> {{element.name}} </td>
         </ng-container>
         
-        <!-- Penalties Column -->
-        <!-- <ng-container matColumnDef="demo-penalties">
-            <th mat-header-cell *matHeaderCellDef> Penalties </th>
-            <td mat-cell *matCellDef="let element"> {{element.penalties}} </td>
-            </ng-container> -->
+        <!-- Actions Column -->
+        <ng-container matColumnDef="demo-actions">
+          <th mat-header-cell *matHeaderCellDef class="actions-column"> Actions </th>
+          <td mat-cell *matCellDef="let element" class="actions-column"> 
+            <mat-icon>flag</mat-icon>
+          </td>
+        </ng-container>
     
     
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
+    </table>
     
 </div>
   `,
@@ -53,7 +56,7 @@ export class LiveLeaderboardComponent implements OnInit {
 
   pilotsData: PlayerDto[] = [];
 
-  displayedColumns: string[] = ['demo-position', 'demo-name'];
+  displayedColumns: string[] = ['demo-position', 'demo-name', 'demo-actions'];
   dataSource = this.pilotsData
 
   @Input() color2: string = "#ff914d";

@@ -209,13 +209,13 @@ export class LiveMapComponent implements OnInit {
         const sphereMesh1 = this.createCpointMesh(`sphereMesh${index}`, x * this.scaleFactor,0,y * this.scaleFactor)
         group.add(sphereMesh1)
 
-        // Crear un CSS2DObject y añadirlo a la escena
-        const div = document.createElement('p');
-        div.textContent = `Sec: ${index + 1}`;
-        div.style.color = 'black'; // Ajusta el color según sea necesario
-        const divLabel = new CSS2DObject(div);
-        divLabel.position.set(x * this.scaleFactor, -5, y * this.scaleFactor);
-        group3dText.add(divLabel);
+        // // Crear un CSS2DObject y añadirlo a la escena
+        // const div = document.createElement('p');
+        // div.textContent = `Sec: ${index + 1}`;
+        // div.style.color = 'black'; // Ajusta el color según sea necesario
+        // const divLabel = new CSS2DObject(div);
+        // divLabel.position.set(x * this.scaleFactor, -5, y * this.scaleFactor);
+        // group3dText.add(divLabel);
       })
       this.scene.add(group)
       this.scene.add(group3dText)
