@@ -18,6 +18,7 @@ export class Player {
     name!: string
     playerColor!: string
     inAccidente: boolean = false; 
+    shouldUpdate: boolean = true;
     lapCount: number; 
     hasCompletedLap: boolean; 
     currentWaypoint: Vector3; 
@@ -39,7 +40,8 @@ export class Player {
     sector!: any 
     passedFirstSector: boolean = false
 
-    constructor(initialWaypoint: Vector3 ,playerColor: number, radius: number, widthSegments: number, heightSegments: number, maxSpeed: number, path: Path) {
+    constructor(position:number, initialWaypoint: Vector3 ,playerColor: number, radius: number, widthSegments: number, heightSegments: number, maxSpeed: number, path: Path) {
+        this.position = position
         this.lapCount = 0;
         this.hasCompletedLap = false;
         this.initialWaypoint = initialWaypoint; 
@@ -87,6 +89,15 @@ export class Player {
         renderComponent.matrix.copy(entity.worldMatrix)
     }
 
+     // Método para actualizar Player con datos de PlayerDto
+     updateFromDto(dto: PlayerDto) {
+        this.position = dto.position;
+        this.name = dto.name;
+        console.log("Player actuaizado:" + this.position)
+        this.shouldUpdate = false
+        // Mantener las propiedades adicionales, como inAccidente
+    }
+
     checkLapCount(): void {
         const currentTime = performance.now()
 
@@ -116,5 +127,9 @@ export class Player {
             return true;
         }
         return false;
+    }
+
+    stopUpdates() {
+        this.shouldUpdate = false;  // Método para detener las actualizaciones
     }
 }

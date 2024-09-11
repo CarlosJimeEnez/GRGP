@@ -62,9 +62,14 @@ import { MatIcon } from '@angular/material/icon';
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Yellow Flag</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="">
+          <div class="row justify-content-center">
+            <div class="col-12 my-3 d-flex justify-content-center">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Yellow Flag</h1>
+              <mat-icon class="yellowFlag m-0">flag</mat-icon>
+            </div>
+
+          </div>
         </div>
         <div class="modal-body">
           

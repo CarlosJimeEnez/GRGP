@@ -105,8 +105,6 @@ export class LiveMapComponent implements OnInit {
   onPathBehavior!: OnPathBehavior;
   entityManager!: EntityManager;
   
-  selectedElement!: PlayerDto; 
-
   constructor(
     private zone: NgZone,
     private cdr: ChangeDetectorRef,
@@ -119,11 +117,6 @@ export class LiveMapComponent implements OnInit {
     this.startTime = Date.now(); 
     this.scene = new Scene();
     this.time = new Time(); 
-    
-    this.alertService.currentElement.subscribe(element => {
-      this.selectedElement = element
-      console.log(`elemento recivido: ${element.position}`)
-    })
 
     this.initialWaypoint = new Vector3();
     this.currentWaypoint = new Vector3();
@@ -190,13 +183,24 @@ export class LiveMapComponent implements OnInit {
     this.path10.loop = true;
 
     this.paths = [this.path, this.path2, this.path3, this.path4, this.path5, this.path6, this.path7, this.path8, this.path9, this.path10]
+    this.newPlayers([2.3, 2.2, 2.1, 1.9, 1.8, 1.4, 1.3, 1.2, 1.1, 1], this.paths, this.colors)
   }
 
 
   ngAfterViewInit(): void {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.updateDimensions();
-    
+      
+      this.alertService.currentElement.subscribe((player: PlayerDto) => {
+        console.log(this.players)
+        const playerToUpdate = this.players.find(p => p.position === player.position);
+        if (playerToUpdate) {
+          playerToUpdate.updateFromDto(player);  // Actualizar el jugador con los datos del DTO
+        }else{
+          console.log("No se encontro el payer")
+        }
+      })
+
       this.labelRenderer = new CSS2DRenderer();
       this.labelRenderer.setSize(this.width, this.height);
       this.labelRenderer.domElement.style.position = 'absolute';
@@ -265,7 +269,7 @@ export class LiveMapComponent implements OnInit {
       const lines = new LineLoop(this.lineGeometry, lineMaterial);
       this.scene.add(lines);
 
-      this.newPlayers([2.3, 2.2, 2.1, 1.9, 1.8, 1.4, 1.3, 1.2, 1.1, 1], this.paths, this.colors)
+     
       this.carrera = new Carrera(this.players) 
       this.players.forEach(element => {
         this.scene.add(element.vehicleMesh)
@@ -370,7 +374,7 @@ export class LiveMapComponent implements OnInit {
 
     // Usamos reduce para encontrar el jugador con más vueltas
     const maxLapsPlayer = this.carrera.corredores.reduce((maxPlayer, player) => {
-      if(player.lapCount < this.maxLaps && !player.inAccidente) {
+      if(player.lapCount < this.maxLaps && !player.inAccidente && player.shouldUpdate) {
         player.checkLapCount()
         player.entityManager.update(delta)
 
@@ -440,15 +444,17 @@ export class LiveMapComponent implements OnInit {
     "#F39C12"  // Naranja
   ]
   for(let i = 0; i < 10; i++){
+
     const player = new Player(
-        this.initialWaypoint, 
-        colors[i], 
-        this.radius, 
-        this.widthSegments, 
-        this.heightSegments, 
-        velocity[i], 
-        this.paths[i]
-      )
+      i+1, 
+      this.initialWaypoint, 
+      colors[i], 
+      this.radius, 
+      this.widthSegments, 
+      this.heightSegments, 
+      velocity[i], 
+      this.paths[i]
+    )
       
     const playerDto = new PlayerDto(
       i +1,
