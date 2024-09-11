@@ -66,3 +66,7 @@
     max-height: 50vh; /* Ajusta según tus necesidades */
     overflow: auto;
 }
+
+.alert {
+    height: 40vh;
+}

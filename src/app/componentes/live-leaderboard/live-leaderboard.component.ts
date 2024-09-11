@@ -44,7 +44,7 @@ import { state } from '@angular/animations';
             <div class="row justify-content-start">
               <div class="col-6">
                 <button
-                  [disabled]="isButtonDisabled"
+                 
                   type="button" class="btn btn-warning center" 
                   data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                   (click)="collision(element)">
@@ -67,7 +67,7 @@ import { state } from '@angular/animations';
         <div class="">
           <div class="row justify-content-center">
             <div class="col-12 my-1 d-flex justify-content-center">
-              <h1 class="modal-title fs-3 my-2" id="staticBackdropLabel">Yellow Flag {{affectedSector}}</h1>
+              <h1 class="modal-title fs-3 my-2" id="staticBackdropLabel">Yellow Flag</h1>
               <mat-icon class="yellowFlag m-0">flag</mat-icon>
             </div>
           </div>
@@ -75,9 +75,12 @@ import { state } from '@angular/animations';
 
         <div class="modal-body">
           <div>
-            <div class="row justify-content-center">
-              <div class="col-12 m-1 d-flex justify-content-center">
-                <h5 class="me-5" for="sectorsAffected">Sectors Affected</h5>
+            <div class="row g-3 justify-content-center">
+              <div class="col-12">
+              <h2>Sector affected: {{affectedSector}}</h2>
+              </div>
+            <div class="col-12 m-1 d-flex justify-content-center">
+                <h5 class="me-5" for="sectorsAffected">Add affected sectors: </h5>
                 <input type="number" [(ngModel)]="sectorsAffected" id="sectorsAffected" (input)="onSectorChange()">
               </div>
             </div>
@@ -122,7 +125,7 @@ export class LiveLeaderboardComponent implements OnInit {
   ngOnInit(): void {
     this.initializeSectors()
     this._alertService.affectedSector$.subscribe((sector: number | null) => {
-      this.affectedSector = sector;
+      this.affectedSector = sector!+1;
     });
 
     this._alertService.dataDetection$.subscribe(value => {
@@ -137,7 +140,7 @@ export class LiveLeaderboardComponent implements OnInit {
   }
 
   collision(element: any) {
-    this._alertService.addAlert('warning', `Player${element.name}`)
+    this._alertService.addAlert('warning', `Player: ${element.name}`)
     this._alertService.changeElement(element)
   }
 
