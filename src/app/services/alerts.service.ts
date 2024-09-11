@@ -15,7 +15,8 @@ export class AlertsService {
   private timeDetectionSource = new BehaviorSubject<number>(0)
   private tableDataSource = new BehaviorSubject<any>(0)
   private elementSource = new BehaviorSubject<any>(null);  // Emite el valor del elemento
-  
+  private buttonDisabledSubject = new BehaviorSubject<boolean>(true); // Comienza deshabilitado
+  buttonDisabled$ = this.buttonDisabledSubject.asObservable();
   currentElement = this.elementSource.asObservable();  // Observable al que los componentes pueden suscribirse
   crashDetection$ = this.crashDetectionSource.asObservable();
   timeDetection$ = this.timeDetectionSource.asObservable(); 
@@ -56,4 +57,7 @@ export class AlertsService {
     this.elementSource.next(element)
   }
   
+  setButtonDisabled(state: boolean) {
+    this.buttonDisabledSubject.next(state)
+  }
 }

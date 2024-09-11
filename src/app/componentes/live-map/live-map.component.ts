@@ -38,8 +38,8 @@ export class LiveMapComponent implements OnInit {
   @Input() player1Color: number = 0xf315c3
   @Input() player2Color: number = 0xff914d
 
-
-  sectorOnProblem!: number 
+  sectorLine!: any;
+  sectorOnProblem!: any 
   allCarsPassedFirstSector: boolean = false
   crashDetection: boolean = false
   // Primero, crea la geometría del círculo
@@ -193,6 +193,7 @@ export class LiveMapComponent implements OnInit {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.updateDimensions();
       
+
       // Seleccion del jugador desde la tabla: 
       this.alertService.currentElement.subscribe((player: any) => {
         const playerToUpdate = this.players.find(p => p.position === player.position);
@@ -200,18 +201,43 @@ export class LiveMapComponent implements OnInit {
           playerToUpdate.updateFromDto(player);
           playerToUpdate.stopUpdates()
           const sectors = this.convertToVector3Array(this.sectors)
-
           const player1 = playerToUpdate.vehicleAgent.getWorldPosition(playerToUpdate.currentWaypoint)
           const player2 = new THREE.Vector3(player1.x, player1.y, player1.z)
 
           const sector = this.findPlayerPositionOnSpline(player2, sectors)
-          this.sectorOnProblem = this.sectors[sector.splineIndex]
-          
+          // Asegurarse de que no se acceda a un índice negativo
+          const startIndex = Math.max(0, sector.splineIndex - 1);
+          const endIndex = sector.splineIndex;
 
-        }else{
+          // Inicializar el array de posiciones
+          const positions: any[] = [];
+
+          // Llenar las posiciones comenzando desde el sector anterior hasta el actual
+          for (let i = startIndex; i <= endIndex; i++) {
+            const currentSectorLine = this.sectors[i];
+
+            currentSectorLine.forEach((vector: any) => {
+              // Escalar y añadir los puntos al array de posiciones
+              positions.push(vector[0] * this.scaleFactor, 0, vector[1] * this.scaleFactor);
+            });
+          }
+
+          const lineGeometry = new BufferGeometry();
+          // Crear un atributo de posición en la geometría
+          lineGeometry.setAttribute('position', new Float32BufferAttribute(positions, 3));          
+          const lineMaterial = new THREE.LineBasicMaterial({ color: 0xc0aa2e }); 
+          const newLine = new THREE.Line(lineGeometry, lineMaterial);
+          
+          // Agregar la nueva línea a la escena
+          this.scene.add(newLine);
+      }
+        else{
           console.log("No se encontro el payer")
         }
       })
+
+
+
 
       this.labelRenderer = new CSS2DRenderer();
       this.labelRenderer.setSize(this.width, this.height);
@@ -221,7 +247,7 @@ export class LiveMapComponent implements OnInit {
       this.mapContainer.nativeElement.appendChild(this.labelRenderer.domElement)
       
       // const sectors = this.calculoSectores()
-      const numeroDeSectores = 24;  // Número de sectores que deseas
+      const numeroDeSectores = 10;  // Número de sectores que deseas
       this.sectors = this.dividirEnSectores(MapPoints, numeroDeSectores);
       console.log(this.sectors)
       const group = new Group();
@@ -278,11 +304,11 @@ export class LiveMapComponent implements OnInit {
 
       this.lineGeometry = new BufferGeometry();
       this.lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
-      const lineMaterial = new LineBasicMaterial({color: 0x000000});
+      const lineMaterial = new LineBasicMaterial({color: 0xc0aa2e});
       const lines = new LineLoop(this.lineGeometry, lineMaterial);
       this.scene.add(lines);
+      this.sectorOnProblem = lines
 
-     
       this.carrera = new Carrera(this.players) 
       this.players.forEach(element => {
         this.scene.add(element.vehicleMesh)
@@ -309,7 +335,7 @@ export class LiveMapComponent implements OnInit {
     return Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
   }
 
-  private dividirEnSectores(MapPoints: any, numeroDeSectores:any, margen = 1) {
+  private dividirEnSectores(MapPoints: any, numeroDeSectores:any, margen = 0.01) {
     let sectores = [];
     let sectorActual = [];
     let distanciaTotal = 0;
@@ -371,18 +397,6 @@ export class LiveMapComponent implements OnInit {
     const delta = this.time.update().getDelta();
     this.labelRenderer.render(this.scene, this.camera);
 
-    // Render Sectors
-    const position: any = [];
-    this.sectors.forEach((element:any) => {
-      element.forEach((elemenInSector:any) => {
-        position.push(elemenInSector[0] * this.scaleFactor, 0, elemenInSector[1] * this.scaleFactor) 
-      });
-    });
-    this.lineGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
-    const lineMaterial = new LineBasicMaterial({color: 0xc0aa2e});
-    const lines = new LineLoop(this.lineGeometry, lineMaterial);
-    this.scene.add(lines);
-
     this.allCarsPassedFirstSector = true
 
     // Usamos reduce para encontrar el jugador con más vueltas
@@ -405,18 +419,17 @@ export class LiveMapComponent implements OnInit {
       }
       return (player.lapCount > maxPlayer.lapCount) ? player : maxPlayer;  
     }, this.carrera.corredores[0]); // Aquí definimos el valor inicial
+    
 
-     // Si todos los coches han pasado por el primer sector, podemos tomar alguna acción
-    if (this.allCarsPassedFirstSector) {
-      const lineMaterial = new LineBasicMaterial({color: 0x1e9924});
-      const lines = new LineLoop(this.lineGeometry, lineMaterial);
-      this.scene.add(lines);
-    }
-
-    //Envio de alerta
+    // ------------------ Envio de alerta (Solo se ejecuta una vez) ------------------------------------
     if (this.allCarsPassedFirstSector && !this.hasSentCrashDetection) {
       this.alertService.addAlert('success', "Pit exit")
+      this.alertService.setButtonDisabled(false)
       this.hasSentCrashDetection = true
+      console.log("Se envio alerta")
+      const lineMaterial = new LineBasicMaterial({color: 0x1e9924});
+      const lines = new Line(this.lineGeometry, lineMaterial);
+      this.scene.add(lines);
     }
 
     this.zone.run(() => {        

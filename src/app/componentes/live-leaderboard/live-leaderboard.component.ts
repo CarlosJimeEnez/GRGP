@@ -6,6 +6,7 @@ import { AlertsService } from '../../services/alerts.service';
 import { MatIcon } from '@angular/material/icon';
 import { Sector } from '../../interface/Sectors';
 import { FormsModule } from '@angular/forms';
+import { state } from '@angular/animations';
 
 @Component({
   selector: 'app-live-leaderboard',
@@ -43,13 +44,12 @@ import { FormsModule } from '@angular/forms';
             <div class="row justify-content-start">
               <div class="col-6">
                 <button
+                  [disabled]="isButtonDisabled"
                   type="button" class="btn btn-warning center" 
                   data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                   (click)="collision(element)">
-
                     <mat-icon class="yellowFlag m-0">flag</mat-icon>
                     <p class="mx-2 my-0">example of a collision</p>
-                
                   </button>
               </div>
             </div>          
@@ -66,20 +66,25 @@ import { FormsModule } from '@angular/forms';
       <div class="modal-content">
         <div class="">
           <div class="row justify-content-center">
-            <div class="col-12 my-3 d-flex justify-content-center">
-              <h1 class="modal-title fs-5" id="staticBackdropLabel">Yellow Flag</h1>
+            <div class="col-12 my-1 d-flex justify-content-center">
+              <h1 class="modal-title fs-3 my-2" id="staticBackdropLabel">Yellow Flag</h1>
               <mat-icon class="yellowFlag m-0">flag</mat-icon>
             </div>
-
           </div>
         </div>
+
         <div class="modal-body">
           <div>
-            <label for="sectorsAffected">Sectors Affected</label>
-            <input type="number" [(ngModel)]="sectorsAffected" id="sectorsAffected" (input)="onSectorChange()">
+            <div class="row justify-content-center">
+              <div class="col-12 m-1 d-flex justify-content-center">
+                <h5 class="me-5" for="sectorsAffected">Sectors Affected</h5>
+                <input type="number" [(ngModel)]="sectorsAffected" id="sectorsAffected" (input)="onSectorChange()">
+              </div>
+            </div>
+            
           </div>
 
-          <div *ngFor="let sector of sectors">
+          <div class="mt-3" *ngFor="let sector of sectors">
             <h6>Sector {{ sector.id }} Speed</h6>
             <div class="btn-group">
               <button class="btn btn-outline-secondary" [ngClass]="{'active': sector.speed === 'slow'}" (click)="setSpeed(sector, 'slow')">Slow</button>
@@ -90,7 +95,7 @@ import { FormsModule } from '@angular/forms';
           </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" (click)="onSubmit()">Understood</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="onSubmit()">Understood</button>
         </div>
       </div>
     </div>
@@ -101,6 +106,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class LiveLeaderboardComponent implements OnInit {
   constructor(private _alertService: AlertsService){}
+  isButtonDisabled = true
   sectorsAffected: number = 1;  // Número de sectores afectados
   sectors: Sector[] = [];  // Lista de sectores
   element!: PlayerDto 
@@ -121,9 +127,14 @@ export class LiveLeaderboardComponent implements OnInit {
       this.pilotsData = dto
       this.dataSource = this.pilotsData
     })
+
+    this._alertService.buttonDisabled$.subscribe((state: boolean) => {
+      this.isButtonDisabled = state
+    })
   }
 
   collision(element: any) {
+    this._alertService.addAlert('warning', `Player${element.name}`)
     this._alertService.changeElement(element)
   }
 
