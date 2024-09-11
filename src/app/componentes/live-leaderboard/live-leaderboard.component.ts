@@ -103,7 +103,7 @@ export class LiveLeaderboardComponent implements OnInit {
   constructor(private _alertService: AlertsService){}
   sectorsAffected: number = 1;  // Número de sectores afectados
   sectors: Sector[] = [];  // Lista de sectores
-
+  element!: PlayerDto 
   pilotsData: PlayerDto[] = [];
 
   displayedColumns: string[] = ['demo-position', 'demo-name', 'demo-actions'];
@@ -124,7 +124,6 @@ export class LiveLeaderboardComponent implements OnInit {
   }
 
   collision(element: any) {
-    console.log("collision detected")
     this._alertService.changeElement(element)
   }
 

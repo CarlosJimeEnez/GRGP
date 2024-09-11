@@ -4,13 +4,13 @@ import { PerspectiveCamera, Scene, WebGLRenderer, LineLoop, BufferGeometry, Floa
 import { Path, Time, FollowPathBehavior, OnPathBehavior, EntityManager, Vector3 } from 'yuka';
 import { MapPoints } from './vectors';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
-
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Player, PlayerDto } from '../../interface/Player';
 import { Carrera } from '../../interface/Carrera';
 import { MatIcon } from '@angular/material/icon';
 import { AlertsService } from '../../services/alerts.service';
 import { Sector } from '../../interface/Sectors';
+import * as THREE from 'three'
 
 @Component({
   selector: 'app-live-map',
@@ -38,6 +38,8 @@ export class LiveMapComponent implements OnInit {
   @Input() player1Color: number = 0xf315c3
   @Input() player2Color: number = 0xff914d
 
+
+  sectorOnProblem!: number 
   allCarsPassedFirstSector: boolean = false
   crashDetection: boolean = false
   // Primero, crea la geometría del círculo
@@ -191,11 +193,21 @@ export class LiveMapComponent implements OnInit {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.updateDimensions();
       
-      this.alertService.currentElement.subscribe((player: PlayerDto) => {
-        console.log(this.players)
+      // Seleccion del jugador desde la tabla: 
+      this.alertService.currentElement.subscribe((player: any) => {
         const playerToUpdate = this.players.find(p => p.position === player.position);
         if (playerToUpdate) {
-          playerToUpdate.updateFromDto(player);  // Actualizar el jugador con los datos del DTO
+          playerToUpdate.updateFromDto(player);
+          playerToUpdate.stopUpdates()
+          const sectors = this.convertToVector3Array(this.sectors)
+
+          const player1 = playerToUpdate.vehicleAgent.getWorldPosition(playerToUpdate.currentWaypoint)
+          const player2 = new THREE.Vector3(player1.x, player1.y, player1.z)
+
+          const sector = this.findPlayerPositionOnSpline(player2, sectors)
+          this.sectorOnProblem = this.sectors[sector.splineIndex]
+          
+
         }else{
           console.log("No se encontro el payer")
         }
@@ -211,6 +223,7 @@ export class LiveMapComponent implements OnInit {
       // const sectors = this.calculoSectores()
       const numeroDeSectores = 24;  // Número de sectores que deseas
       this.sectors = this.dividirEnSectores(MapPoints, numeroDeSectores);
+      console.log(this.sectors)
       const group = new Group();
       const group3dText = new Group();
 
@@ -417,8 +430,7 @@ export class LiveMapComponent implements OnInit {
 
 
   newPlayers(velocity: number[], paths: Path[], colors: number[]): void{
-   let playerDtoArray: PlayerDto[] = []
-   
+    let playerDtoArray: PlayerDto[] = []
     const nombres: string[] = [
       "Juan",
       "María",
@@ -430,7 +442,8 @@ export class LiveMapComponent implements OnInit {
       "Sofía",
       "Pedro",
       "Lucía"
-  ];
+    ];
+
   const colorsHex: string[] = [
     "#FF5733", // Rojo anaranjado
     "#33FF57", // Verde lima
@@ -475,4 +488,59 @@ export class LiveMapComponent implements OnInit {
     this.players.push(player)
   }
 }
+
+  // Definir una spline a partir de los puntos del sector
+createSplineFromSector(sector: THREE.Vector3[]): any {
+  console.log(sector)
+  let spline: any = []
+  sector.forEach((element: any) => {
+    spline.push(new THREE.CatmullRomCurve3(element, false, 'catmullrom'))
+  })
+  return spline
+}
+
+// Encontrar la posición del jugador en la curva spline
+findPlayerPositionOnSpline(playerPosition: THREE.Vector3, sector: THREE.Vector3[]): any | null {
+  const spline = this.createSplineFromSector(sector);
+  
+  let closestPointOnSpline = null;
+  let minDistance = Infinity;
+  let splineIndex = -1 
+
+  spline.forEach((spline: THREE.CatmullRomCurve3, index: number) => {
+    const divisions = 100; // Puedes ajustar cuántos puntos calcular en la curva
+    for (let i = 0; i <= divisions; i++) {
+      const t = i / divisions; // Va de 0 a 1 en incrementos pequeños
+      const pointOnSpline = spline.getPoint(t);
+      const distance = playerPosition.distanceTo(pointOnSpline);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestPointOnSpline = pointOnSpline;
+        splineIndex = index
+      }
+    }
+  });
+  // Recorrer la curva en varios puntos y encontrar el más cercano
+  
+
+  if (closestPointOnSpline) {
+    console.log(`El jugador está en el punto más cercano de la spline:`, closestPointOnSpline);
+    console.log(splineIndex)
+    return {closestPointOnSpline, splineIndex};
+  }
+
+  return null; // No se encontró un punto cercano en la spline
+}
+
+  // Función para convertir number[][] en THREE.Vector3[]
+  convertToVector3Array(sector: number[][]): THREE.Vector3[] {
+    
+    const sectorThree: any = []
+    sector.forEach(element => {
+      sectorThree.push(element.map((point: any) => new THREE.Vector3(point[0] * this.scaleFactor, 0, point[1]* this.scaleFactor)))  // Si es un array de 3 valores
+    })
+    console.log(sectorThree)
+    return sectorThree 
+}
+
 }
