@@ -10,7 +10,7 @@ import { Player, PlayerDto } from '../../interface/Player';
 import { Carrera } from '../../interface/Carrera';
 import { MatIcon } from '@angular/material/icon';
 import { AlertsService } from '../../services/alerts.service';
-import { Sectors } from '../../interface/Sectors';
+import { Sector } from '../../interface/Sectors';
 
 @Component({
   selector: 'app-live-map',

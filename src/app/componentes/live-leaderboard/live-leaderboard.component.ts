@@ -4,11 +4,13 @@ import { CommonModule } from '@angular/common';
 import { Player, PlayerDto } from '../../interface/Player';
 import { AlertsService } from '../../services/alerts.service';
 import { MatIcon } from '@angular/material/icon';
+import { Sector } from '../../interface/Sectors';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-live-leaderboard',
   standalone: true,
-  imports: [MatTableModule, CommonModule, MatIcon],
+  imports: [MatTableModule, CommonModule, MatIcon, FormsModule],
   template: `
   <div class="card p-1  bold">
     <h5 class="card-title p-3 pb-0 mb-0 bold">Live Leaderboard</h5>
@@ -72,11 +74,23 @@ import { MatIcon } from '@angular/material/icon';
           </div>
         </div>
         <div class="modal-body">
-          
-        </div>
+          <div>
+            <label for="sectorsAffected">Sectors Affected</label>
+            <input type="number" [(ngModel)]="sectorsAffected" id="sectorsAffected" (input)="onSectorChange()">
+          </div>
+
+          <div *ngFor="let sector of sectors">
+            <h6>Sector {{ sector.id }} Speed</h6>
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary" [ngClass]="{'active': sector.speed === 'slow'}" (click)="setSpeed(sector, 'slow')">Slow</button>
+              <button class="btn btn-outline-secondary" [ngClass]="{'active': sector.speed === 'verySlow'}" (click)="setSpeed(sector, 'verySlow')">Very Slow</button>
+              <button class="btn btn-outline-secondary" [ngClass]="{'active': sector.speed === 'extremelySlow'}" (click)="setSpeed(sector, 'extremelySlow')">Extremely Slow</button>
+            </div>
+          </div>
+          </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Understood</button>
+          <button type="button" class="btn btn-primary" (click)="onSubmit()">Understood</button>
         </div>
       </div>
     </div>
@@ -87,6 +101,8 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class LiveLeaderboardComponent implements OnInit {
   constructor(private _alertService: AlertsService){}
+  sectorsAffected: number = 1;  // Número de sectores afectados
+  sectors: Sector[] = [];  // Lista de sectores
 
   pilotsData: PlayerDto[] = [];
 
@@ -98,6 +114,8 @@ export class LiveLeaderboardComponent implements OnInit {
   
   
   ngOnInit(): void {
+    this.initializeSectors()
+
     this._alertService.dataDetection$.subscribe(value => {
       const dto: PlayerDto[] = value
       this.pilotsData = dto
@@ -110,5 +128,28 @@ export class LiveLeaderboardComponent implements OnInit {
     this._alertService.changeElement(element)
   }
 
+  // Inicializar sectores con un sector por defecto
+  initializeSectors() {
+    this.sectors = [{ id: 1, speed: 'select speed' }];
+  }
   
+  // Actualiza los sectores cuando se cambia el número de sectores afectados
+  onSectorChange() {
+    const sectorCount = this.sectorsAffected;
+    this.sectors = [];
+
+    for (let i = 1; i <= sectorCount; i++) {
+      this.sectors.push({ id: i, speed: 'select speed' });
+    }
+  }
+
+  // Establece la velocidad de un sector en específico
+  setSpeed(sector: Sector, speed: string) {
+    sector.speed = speed;
+  }
+
+  // Envía los datos (se puede manejar según la lógica que desees)
+  onSubmit() {
+    console.log(this.sectors);
+  }
 }
