@@ -44,7 +44,7 @@ import { state } from '@angular/animations';
             <div class="row justify-content-start">
               <div class="col-6">
                 <button
-                 [disabled]="isButtonDisabled"]
+                 [disabled]="isButtonDisabled"
                   type="button" class="btn btn-warning center" 
                   data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                   (click)="collision(element)">
@@ -80,7 +80,7 @@ import { state } from '@angular/animations';
               <h2>Sector affected: {{affectedSector}}</h2>
               </div>
             <div class="col-12 m-1 d-flex justify-content-center">
-                <h5 class="me-5" for="sectorsAffected">Add affected sectors: </h5>
+                <h5 class="me-5" for="sectorsAffected">Add below the affected sector: </h5>
                 <input type="number" [(ngModel)]="sectorsAffected" id="sectorsAffected" (input)="onSectorChange()">
               </div>
             </div>
@@ -95,6 +95,78 @@ import { state } from '@angular/animations';
               <button class="btn btn-outline-secondary" [ngClass]="{'active': sector.speed === 'extremelySlow'}" (click)="setSpeed(sector, 'extremelySlow')">Extremely Slow</button>
             </div>
           </div>
+
+          <div class="container my-5">
+            <h3>Other sectors</h3>
+           <div class="row">
+            <!-- Genera 4 columnas por fila -->
+            <div class="col-6 col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector1">
+                <label class="form-check-label" for="sector1">
+                  Sector 1
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector6">
+                <label class="form-check-label" for="sector6">
+                  Sector 6
+                </label>
+              </div>
+              <!-- Repite para los otros sectores -->
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector2">
+                <label class="form-check-label" for="sector2">
+                  Sector 2
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector7">
+                <label class="form-check-label" for="sector7">
+                  Sector 7
+                </label>
+              </div>
+              <!-- Añadir más sectores... -->
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector3">
+                <label class="form-check-label" for="sector3">
+                  Sector 3
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector8">
+                <label class="form-check-label" for="sector8">
+                  Sector 8
+                </label>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector4">
+                <label class="form-check-label" for="sector4">
+                  Sector 4
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sector9">
+                <label class="form-check-label" for="sector9">
+                  Sector 9
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="container my-3">
+            <div class="row">
+              <div class="col">
+                  <h6>Speed: low</h6>
+              </div>
+            </div>
+          </div>
+        </div>
           </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

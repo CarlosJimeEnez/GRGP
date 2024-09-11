@@ -21,7 +21,7 @@ import { SidebarComponent } from "../sidebar/sidebar.component";
 ],
   template: `
     <section>
-      <div class="fluid-container">
+      <div class="">
           <div class="row align-items-center justify-content-start">
             <div class="col-2 d-flex d-md-none  justify-content-center">
               <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
@@ -29,7 +29,7 @@ import { SidebarComponent } from "../sidebar/sidebar.component";
               </button>
             </div>
 
-            <div class="col-3 d-flex align-items-center m-2">
+            <div class="col-4 d-flex align-items-center m-2">
                 <img class="logo-img" src="images/GRGP_Badge-Monogram-Vertical-Lettering_Colored.svg" alt="" srcset="">
               </div>
             
@@ -89,7 +89,7 @@ h1 {
 }
 
 .logo-img {   
-    width: 50px;
+    width: 100px;
     height: auto;
 }
 
