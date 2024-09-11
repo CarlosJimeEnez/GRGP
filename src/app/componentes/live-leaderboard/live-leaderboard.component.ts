@@ -44,7 +44,7 @@ import { state } from '@angular/animations';
             <div class="row justify-content-start">
               <div class="col-6">
                 <button
-                 
+                 [disabled]="isButtonDisabled"]
                   type="button" class="btn btn-warning center" 
                   data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                   (click)="collision(element)">
